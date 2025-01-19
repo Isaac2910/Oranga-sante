@@ -1,0 +1,33 @@
+# Fichiers Python compilés
+*.pyc
+__pycache__/
+
+# Paramètres locaux ou secrets
+*.env
+sa/
+
+# Bases de données SQLite
+db.sqlite3
+
+# Médias et fichiers statiques générés
+/media/
+/staticfiles/
+
+# Dossiers de virtualenv
+venv/
+.venv/
+
+# Configurations de l'IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Fichiers temporaires ou de sauvegarde
+*.bak
+*.swp
+
+# Fichiers spécifiques
+fichersb/
+documents/
