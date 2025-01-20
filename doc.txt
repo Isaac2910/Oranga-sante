@@ -1,0 +1,10 @@
+<div class="group-35">
+          <form class="signup" id="signup_form" method="post" action="{% url 'account_signup'}">
+            {% csrf_token %}
+          <div class="overlap-group-container-1">
+            <input class="overlap-group1 border-1px-dove-gray -applesystemuifont-regular-normal-black-20px" type="text" id="first_name" name="first_name" placeholder="First Name"/>
+            <input class="overlap-group2 border-1px-dove-gray -applesystemuifont-regular-normal-black-20px" type="text" id="last_name" name="last_name" placeholder="Last Name"/>
+          </div>
+          <div class="overlap-group">
+            <input class="rectangle border-1px-dove-gray -applesystemuifont-regular-normal-black-20px" type="email" id="email" name="email" placeholder="Email"/>
+          </div>

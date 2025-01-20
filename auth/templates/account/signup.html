@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="signup-container">
+    <h2>Inscription</h2>
+    <form method="POST" class="signup-form">
+      {% csrf_token %}
+      {{ form.as_p }}  <!-- Affiche les champs du formulaire -->
+      
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+      </div>
+    </form>
+    <p>Déjà un compte ? <a href="{% url 'account:login' %}">Se connecter</a></p>
+  </div>
+{% endblock %}

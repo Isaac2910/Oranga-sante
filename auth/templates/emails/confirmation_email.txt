@@ -1,0 +1,10 @@
+Bonjour {{ user.username }},
+
+Merci de vous être inscrit sur notre site. Pour confirmer votre email, veuillez cliquer sur le lien suivant :
+
+{{ activate_url }}
+
+Si vous n'avez pas créé de compte, ignorez cet email.
+
+Cordialement,
+L'équipe de {{ site_name }}
