@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composant Attrayant</title>
+    <style>
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color:  #1D82B6;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            align-items: center;
+        }
+
+        /* Section gauche : Bienvenue */
+        .welcome-section h1 {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: #1A9F09;
+        }
+
+        .welcome-section .highlight {
+            color: #1D82B6;
+            font-weight: bold;
+        }
+
+        .welcome-section p {
+            color: #c4c4c4;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button.primary {
+            background-color: #1D82B6;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .button.primary:hover {
+            background-color: #166893;
+            transform: scale(1.05);
+        }
+
+        /* Section centrale */
+        .doctors {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .doctor-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .doctor-img.highlight-img {
+            border-color: #1A9F09;
+        }
+
+        .product-card {
+            background-color: white;
+            color: black;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            color: #1A9F09;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .button.buy-now {
+            background-color: #1A9F09;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .button.buy-now:hover {
+            background-color: #13840C;
+            transform: scale(1.05);
+        }
+
+        /* Section droite */
+        .cta-section {
+            text-align: right;
+        }
+
+        .cta-section .button {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .button.secondary {
+            background-color: transparent;
+            border: 2px solid #1D82B6;
+            color: white;
+        }
+
+        .button.secondary:hover {
+            background-color: #1D82B6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Section gauche : Bienvenue -->
+        <div class="welcome-section">
+            <h1>Bienvenue sur <span class="highlight">notre plateforme</span></h1>
+            <p>Découvrez des produits innovants et des services adaptés à vos besoins. Rejoignez-nous dès maintenant !</p>
+            <a href="#" class="button primary">Essayer gratuitement</a>
+        </div>
+
+        <!-- Section centrale : Médecins et produit -->
+        <div class="product-section">
+            <div class="doctors">
+                <img src="doctor1.jpg" alt="Médecin 1" class="doctor-img">
+                <img src="doctor2.jpg" alt="Médecin 2" class="doctor-img highlight-img">
+            </div>
+            <div class="product-card">
+                <p class="product-title">SR à base d'huile de coco</p>
+                <p class="product-price">5 €</p>
+                <button class="button buy-now">Acheter maintenant</button>
+            </div>
+        </div>
+
+        <!-- Section droite : S'inscrire -->
+        <div class="cta-section">
+            <a href="#" class="button secondary">S'inscrire gratuitement</a>
+            <a href="#" class="button secondary">Découvrir nos services</a>
+        </div>
+    </div>
+    <script>
+        // Ajout de clics animés
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Action exécutée !');
+            });
+        });
+    </script>
+</body>
+</html>
