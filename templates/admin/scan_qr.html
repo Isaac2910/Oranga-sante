@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Scan de QR Code</h1>
+<video id="preview" style="width: 100%; height: auto;"></video>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+<script>
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    scanner.addListener('scan', function (content) {
+        alert('QR Code Scanné : ' + content);
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+        } else {
+            console.error('Aucune caméra trouvée');
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+</script>
+{% endblock %}
