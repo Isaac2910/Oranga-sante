@@ -1,0 +1,26 @@
+<h1>Mon Panier</h1>
+{% if commande %}
+    <table>
+        <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix</th>
+            <th>Total</th>
+        </tr>
+        {% for item in commande.commande_produits.all %}
+        <tr>
+            <td>{{ item.produit.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.produit.prix }}</td>
+            <td>{{ item.produit.prix|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p>Montant Total : {{ commande.montant_total }}</p>
+    <form method="post" action="{% url 'payer' %}">
+        {% csrf_token %}
+        <button type="submit">Payer</button>
+    </form>
+{% else %}
+    <p>Votre panier est vide.</p>
+{% endif %}

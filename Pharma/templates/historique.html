@@ -1,0 +1,11 @@
+<h1>Historique des commandes</h1>
+{% for commande in commandes %}
+    <div>
+        <p>Commande ID : {{ commande.id }}</p>
+        <p>Date : {{ commande.date_commande }}</p>
+        <p>Montant Total : {{ commande.montant_total }}</p>
+        <p>Statut : {{ commande.statut }}</p>
+    </div>
+{% empty %}
+    <p>Aucune commande disponible.</p>
+{% endfor %}
