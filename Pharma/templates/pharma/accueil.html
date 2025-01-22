@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pharmacie</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <style>
       /* Animation pour faire clignoter le bouton */
       .blink {
@@ -22,29 +25,31 @@
   <body class="font-sans">
     <!-- Header -->
     <header class="bg-white shadow-md">
-      <div class="container mx-auto flex flex-wrap items-center justify-between py-4 px-4 sm:px-6">
+      <div
+        class="container mx-auto flex flex-wrap items-center justify-between py-4 px-4 sm:px-6"
+      >
         <!-- Logo et Navigation -->
         <div class="flex items-center space-x-4">
           <img src="logo.png" alt="Logo" class="h-8" />
-          <nav class="hidden md:flex space-x-4 text-sm sm:text-base">
-            <a href="#" class="text-gray-600 hover:text-[#1D82B6]">Soulagement des douleurs</a>
-            <a href="#" class="text-gray-600 hover:text-[#1D82B6]">Toutes les catégories</a>
-          </nav>
         </div>
-    
+
         <!-- Barre de recherche et icônes -->
-        <div class="flex flex-wrap items-center space-x-4 mt-4 md:mt-0">
+        <div
+          class="hidden md:flex flex-wrap items-center space-x-4 mt-4 md:mt-0"
+        >
           <input
             type="text"
             placeholder="Recherche"
             class="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]">
+          <button
+            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]"
+          >
             Recherche
           </button>
           <img src="user-icon.png" alt="User" class="h-8" />
         </div>
-    
+
         <!-- Menu burger pour petits écrans -->
         <button
           class="block md:hidden text-gray-600 hover:text-[#1D82B6] focus:outline-none"
@@ -52,23 +57,30 @@
         >
           <i class="bi bi-list text-2xl"></i>
         </button>
-    
-        <!-- Menu déroulant pour petits écrans -->
-        <nav
-          id="mobile-menu"
-          class="hidden w-full mt-4 space-y-2 md:hidden text-sm bg-gray-50 rounded-lg p-4 shadow-md"
-        >
-          <a href="#" class="block text-gray-600 hover:text-[#1D82B6]">Soulagement des douleurs</a>
-          <a href="#" class="block text-gray-600 hover:text-[#1D82B6]">Toutes les catégories</a>
-        </nav>
+      </div>
+
+      <!-- Menu déroulant pour les petits écrans -->
+      <div id="mobileMenu" class="hidden md:hidden">
+        <div class="flex flex-col space-y-4 px-4 py-4 bg-gray-100">
+          <input
+            type="text"
+            placeholder="Recherche"
+            class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]"
+          >
+            Recherche
+          </button>
+          <img src="user-icon.png" alt="User" class="h-8 mx-auto" />
+        </div>
       </div>
     </header>
-    
 
     <!-- Boutons fixes -->
     <button
       onclick="openCamera()"
-      class="fixed bottom-24 right-5  bg-[#1D82B6] text-white px-2 py-3 rounded-md font-bold hover:bg-[#174157] focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg"
+      class="fixed bottom-24 right-5 bg-[#1D82B6] text-white px-2 py-3 rounded-md font-bold hover:bg-[#174157] focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg"
     >
       <div class="flex items-center flex-col">
         <span>Ordonnance</span>
@@ -107,7 +119,7 @@
             Commencer
           </button>
         </div>
-    
+
         <!-- Illustration -->
         <div class="md:w-1/2 mb-8 md:mb-0">
           <img
@@ -118,40 +130,52 @@
         </div>
       </div>
     </section>
-    
 
     <!-- Features Section -->
     <section class="py-8 flex justify-center">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center"
+        >
           <!-- Carte 1 -->
-          <div class="bg-[#BFE5C7] p-6 shadow rounded-lg hover:shadow-lg transition">
+          <div
+            class="bg-[#BFE5C7] p-6 shadow rounded-lg hover:shadow-lg transition"
+          >
             <p class="font-semibold text-black">
-              Obtenez 25% de <br /> Réduction
+              Obtenez 25% de <br />
+              Réduction
             </p>
           </div>
           <!-- Carte 2 -->
-          <div class="bg-[#FAEDC9] p-6 shadow rounded-lg hover:shadow-lg transition">
+          <div
+            class="bg-[#FAEDC9] p-6 shadow rounded-lg hover:shadow-lg transition"
+          >
             <p class="font-semibold text-black">
-              Livraison à Domicile<br /> Gratuite
+              Livraison à Domicile<br />
+              Gratuite
             </p>
           </div>
           <!-- Carte 3 -->
-          <div class="bg-[#C5EF99] p-6 shadow rounded-lg hover:shadow-lg transition">
+          <div
+            class="bg-[#C5EF99] p-6 shadow rounded-lg hover:shadow-lg transition"
+          >
             <p class="font-semibold text-black">
-              Rendez-vous avec<br /> un Médecin
+              Rendez-vous avec<br />
+              un Médecin
             </p>
           </div>
           <!-- Carte 4 -->
-          <div class="bg-[#ECC5FF] p-6 shadow rounded-lg hover:shadow-lg transition">
+          <div
+            class="bg-[#ECC5FF] p-6 shadow rounded-lg hover:shadow-lg transition"
+          >
             <p class="font-semibold text-black">
-              Conseils de<br /> Santé
+              Conseils de<br />
+              Santé
             </p>
           </div>
         </div>
       </div>
     </section>
-    
 
     <!-- Products Section -->
     <section class="py-16">
@@ -160,7 +184,7 @@
           Nouveaux Produits Disponibles au Gabon
         </h2>
         <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
           <!-- Product Card -->
           <div
@@ -191,7 +215,9 @@
           <div
             class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
           >
-            <div class="bg-gray-50 h-40 mb-4 rounded-md"><img class="w-full h-full mb-1 rounded-md" src="" alt=""></div>
+            <div class="bg-gray-50 h-40 mb-4 rounded-md">
+              <img class="w-full h-full mb-1 rounded-md" src="" alt="" />
+            </div>
             <h3 class="font-bold text-lg text-[#1D82B6]">
               Découvrez un trésor d'astuces pratiques pour améliorer la santé au
               Gabon
@@ -203,7 +229,6 @@
               Lire plus
             </button>
           </div>
-          <!-- Repeat Article Card as needed -->
         </div>
       </div>
     </section>
@@ -217,6 +242,11 @@
     </footer>
 
     <script>
+      function toggleMenu() {
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.toggle("hidden");
+      }
+
       function openCamera() {
         alert("Ouverture de la caméra pour scanner l'ordonnance.");
         // Ajoutez ici la logique pour ouvrir la caméra et scanner un QR code.
