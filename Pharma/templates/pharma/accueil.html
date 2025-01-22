@@ -1,142 +1,231 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pharmacie</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* Animation pour faire clignoter le bouton */
-        .blink {
-            animation: blinker 1.5s linear infinite;
-        }
+      /* Animation pour faire clignoter le bouton */
+      .blink {
+        animation: blinker 1.5s linear infinite;
+      }
 
-        @keyframes blinker {
-            50% {
-                opacity: 0.5;
-            }
+      @keyframes blinker {
+        50% {
+          opacity: 0.5;
         }
+      }
     </style>
-</head>
-<body class="font-sans">
+  </head>
+  <body class="font-sans">
     <!-- Header -->
     <header class="bg-white shadow-md">
-        <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <div class="flex items-center space-x-4">
-                <img src="logo.png" alt="Logo" class="h-8">
-                <nav class="space-x-6">
-                    <a href="#" class="text-gray-600 hover:text-blue-500">Soulagement des douleurs</a>
-                    <a href="#" class="text-gray-600 hover:text-blue-500">Toutes les catégories</a>
-                </nav>
-            </div>
-            <div class="flex space-x-4 items-center">
-                <input type="text" placeholder="Recherche" class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Recherche</button>
-                <img src="user-icon.png" alt="User" class="h-8">
-            </div>
+      <div class="container mx-auto flex flex-wrap items-center justify-between py-4 px-4 sm:px-6">
+        <!-- Logo et Navigation -->
+        <div class="flex items-center space-x-4">
+          <img src="logo.png" alt="Logo" class="h-8" />
+          <nav class="hidden md:flex space-x-4 text-sm sm:text-base">
+            <a href="#" class="text-gray-600 hover:text-[#1D82B6]">Soulagement des douleurs</a>
+            <a href="#" class="text-gray-600 hover:text-[#1D82B6]">Toutes les catégories</a>
+          </nav>
         </div>
+    
+        <!-- Barre de recherche et icônes -->
+        <div class="flex flex-wrap items-center space-x-4 mt-4 md:mt-0">
+          <input
+            type="text"
+            placeholder="Recherche"
+            class="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]">
+            Recherche
+          </button>
+          <img src="user-icon.png" alt="User" class="h-8" />
+        </div>
+    
+        <!-- Menu burger pour petits écrans -->
+        <button
+          class="block md:hidden text-gray-600 hover:text-[#1D82B6] focus:outline-none"
+          onclick="toggleMenu()"
+        >
+          <i class="bi bi-list text-2xl"></i>
+        </button>
+    
+        <!-- Menu déroulant pour petits écrans -->
+        <nav
+          id="mobile-menu"
+          class="hidden w-full mt-4 space-y-2 md:hidden text-sm bg-gray-50 rounded-lg p-4 shadow-md"
+        >
+          <a href="#" class="block text-gray-600 hover:text-[#1D82B6]">Soulagement des douleurs</a>
+          <a href="#" class="block text-gray-600 hover:text-[#1D82B6]">Toutes les catégories</a>
+        </nav>
+      </div>
     </header>
+    
 
     <!-- Boutons fixes -->
-    <button 
-        onclick="openCamera()" 
-        class="fixed bottom-20 right-5 blink bg-blue-500 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg">
-        <div class="flex items-center space-x-2">
-            <span class="material-icons">qr_code_scanner</span>
-            <span>Ordonnance</span>
-        </div>
+    <button
+      onclick="openCamera()"
+      class="fixed bottom-24 right-5  bg-[#1D82B6] text-white px-2 py-3 rounded-md font-bold hover:bg-[#174157] focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg"
+    >
+      <div class="flex items-center flex-col">
+        <span>Ordonnance</span>
+        <i class="bi bi-qr-code-scan"></i>
+      </div>
     </button>
 
-    <button 
-        onclick="viewCart()" 
-        class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-full font-bold hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 shadow-lg">
-        <div class="flex items-center space-x-2">
-            <span class="material-icons">shopping_cart</span>
-            <span>Panier</span>
-        </div>
+    <button
+      onclick="viewCart()"
+      class="fixed bottom-3 right-5 bg-[#1A9F09] text-white px-6 py-3 rounded-md font-bold hover:bg-[#2c8b1f] focus:outline-none focus:ring-4 focus:ring-[#2c8b1f] shadow-lg"
+    >
+      <div class="flex items-center flex-col">
+        <span>Panier</span>
+        <i class="bi bi-bag"></i>
+      </div>
     </button>
 
     <!-- Hero Section -->
-    <section class="bg-blue-500 text-white py-16">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-6">
-            <div class="md:w-1/2">
-                <h1 class="text-4xl font-bold mb-4">Votre pharmacie à portée de main</h1>
-                <p class="mb-6">Scannez vos ordonnances et accédez rapidement à vos médicaments. Améliorez votre parcours de santé avec des réductions exclusives et une accessibilité sans précédent, directement depuis le Gabon.</p>
-                <button class="bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">Commencer</button>
-            </div>
-            <div class="md:w-1/2">
-                <img src="pharmacy-illustration.png" alt="Pharmacy Illustration" class="w-full h-auto">
-            </div>
+    <section class="bg-[#1D82B6] text-white py-16 sm:py-28">
+      <div
+        class="container mx-auto flex flex-col-reverse md:flex-row items-center justify-between px-4 sm:px-6 lg:px-8"
+      >
+        <!-- Texte -->
+        <div class="md:w-1/2 text-center md:text-left">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            Votre pharmacie à portée de main
+          </h1>
+          <p class="mb-6 text-sm sm:text-base lg:text-lg leading-relaxed">
+            Scannez vos ordonnances et accédez rapidement à vos médicaments.
+            Améliorez votre parcours de santé avec des réductions exclusives et
+            une accessibilité sans précédent, directement depuis le Gabon.
+          </p>
+          <button
+            class="bg-white text-[#1D82B6] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 transition-all"
+          >
+            Commencer
+          </button>
         </div>
+    
+        <!-- Illustration -->
+        <div class="md:w-1/2 mb-8 md:mb-0">
+          <img
+            src="pharmacy-illustration.png"
+            alt="Pharmacy Illustration"
+            class="w-4/5 mx-auto md:w-full h-auto"
+          />
+        </div>
+      </div>
     </section>
+    
 
     <!-- Features Section -->
-    <section class="py-8 ">
-        <div class="container mx-auto flex justify-around text-center">
-            <div class="bg-white p-6 shadow rounded-lg hover:shadow-lg transition">
-                <p class="font-semibold text-blue-500">Obtenez 25% de Réduction</p>
-            </div>
-            <div class="bg-white p-6 shadow rounded-lg hover:shadow-lg transition">
-                <p class="font-semibold text-blue-500">Livraison à Domicile Gratuite</p>
-            </div>
-            <div class="bg-white p-6 shadow rounded-lg hover:shadow-lg transition">
-                <p class="font-semibold text-blue-500">Rendez-vous avec un Médecin</p>
-            </div>
-            <div class="bg-white p-6 shadow rounded-lg hover:shadow-lg transition">
-                <p class="font-semibold text-blue-500">Conseils de Santé</p>
-            </div>
+    <section class="py-8 flex justify-center">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+          <!-- Carte 1 -->
+          <div class="bg-[#BFE5C7] p-6 shadow rounded-lg hover:shadow-lg transition">
+            <p class="font-semibold text-black">
+              Obtenez 25% de <br /> Réduction
+            </p>
+          </div>
+          <!-- Carte 2 -->
+          <div class="bg-[#FAEDC9] p-6 shadow rounded-lg hover:shadow-lg transition">
+            <p class="font-semibold text-black">
+              Livraison à Domicile<br /> Gratuite
+            </p>
+          </div>
+          <!-- Carte 3 -->
+          <div class="bg-[#C5EF99] p-6 shadow rounded-lg hover:shadow-lg transition">
+            <p class="font-semibold text-black">
+              Rendez-vous avec<br /> un Médecin
+            </p>
+          </div>
+          <!-- Carte 4 -->
+          <div class="bg-[#ECC5FF] p-6 shadow rounded-lg hover:shadow-lg transition">
+            <p class="font-semibold text-black">
+              Conseils de<br /> Santé
+            </p>
+          </div>
         </div>
+      </div>
     </section>
+    
 
     <!-- Products Section -->
     <section class="py-16">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-10">Nouveaux Produits Disponibles au Gabon</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Product Card -->
-                <div class="bg-white shadow-lg rounded-lg p-4 text-center hover:shadow-xl transition">
-                    <img src="panadol.png" alt="Panadol" class="mx-auto h-40 mb-4">
-                    <h3 class="font-bold text-lg text-blue-500">Panadol</h3>
-                    <p class="text-gray-700 mb-4">2500 FCFA</p>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Ajouter au panier</button>
-                </div>
-                <!-- Repeat Product Card as needed -->
-            </div>
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-10">
+          Nouveaux Produits Disponibles au Gabon
+        </h2>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        >
+          <!-- Product Card -->
+          <div
+            class="bg-white shadow-lg rounded-lg p-4 text-center hover:shadow-xl transition"
+          >
+            <img src="panadol.png" alt="Panadol" class="mx-auto h-40 mb-4" />
+            <h2 class="text-lg font-semibold text-gray-800">Panadol</h2>
+            <p class="text-gray-600 mt-2 text-lg font-medium">2500 FCFA</p>
+            <button
+              class="bg-[#1A9F09] text-white px-4 py-2 rounded-lg hover:scale-105"
+            >
+              Ajouter au panier
+            </button>
+          </div>
+          <!-- Repeat Product Card as needed -->
         </div>
+      </div>
     </section>
 
     <!-- Articles Section -->
     <section class="py-16 bg-gray-100">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-10">Nos Dernières Nouvelles & Articles</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <!-- Article Card -->
-                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition">
-                    <div class="bg-gray-300 h-40 mb-4"></div>
-                    <h3 class="font-bold text-lg text-blue-500">Découvrez un trésor d'astuces pratiques pour améliorer la santé au Gabon</h3>
-                    <p class="text-gray-600 text-sm mb-4">11 janv 2025</p>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Lire plus</button>
-                </div>
-                <!-- Repeat Article Card as needed -->
-            </div>
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-10">
+          Nos Dernières Nouvelles & Articles
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <!-- Article Card -->
+          <div
+            class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
+          >
+            <div class="bg-gray-50 h-40 mb-4 rounded-md"><img class="w-full h-full mb-1 rounded-md" src="" alt=""></div>
+            <h3 class="font-bold text-lg text-[#1D82B6]">
+              Découvrez un trésor d'astuces pratiques pour améliorer la santé au
+              Gabon
+            </h3>
+            <p class="text-gray-600 text-sm mb-4">11 janv 2025</p>
+            <button
+              class="bg-[#1A9F09] text-white px-4 py-2 rounded-lg hover:bg-[#2c8b1f]"
+            >
+              Lire plus
+            </button>
+          </div>
+          <!-- Repeat Article Card as needed -->
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-blue-500 text-white py-6 text-center">
-        <p>&copy; 2025 Boutique Médico | Tous droits réservés</p>
+    <footer class="bg-[#1D82B6] text-white text-center py-8">
+      <p class="text-lg font-medium">
+        © 2025 <span class="text-[#43BC84]">Oranga</span>
+        <span class="text-[#FBE79A]">Santé</span> - Tous droits réservés.
+      </p>
     </footer>
 
     <script>
-        function openCamera() {
-            alert("Ouverture de la caméra pour scanner l'ordonnance.");
-            // Ajoutez ici la logique pour ouvrir la caméra et scanner un QR code.
-        }
+      function openCamera() {
+        alert("Ouverture de la caméra pour scanner l'ordonnance.");
+        // Ajoutez ici la logique pour ouvrir la caméra et scanner un QR code.
+      }
 
-        function viewCart() {
-            alert("Ouverture du panier.");
-            // Ajoutez ici la logique pour afficher le panier.
-        }
+      function viewCart() {
+        alert("Ouverture du panier.");
+        // Ajoutez ici la logique pour afficher le panier.
+      }
     </script>
-</body>
+  </body>
 </html>
