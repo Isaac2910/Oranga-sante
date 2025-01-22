@@ -1,6 +1,11 @@
 from django.contrib import admin
 from .models import Categorie, Produit, Commande, CommandeProduit
-
+from django.utils.html import format_html
+from django.contrib import admin
+from django.shortcuts import redirect, render
+from django.urls import path
+from django.utils.html import format_html
+from .models import Commande
 
 @admin.register(Categorie)
 class CategorieAdmin(admin.ModelAdmin):
@@ -25,45 +30,48 @@ from django.urls import path
 from .models import Categorie, Produit, Commande, CommandeProduit
 
 
-@admin.register(Commande)
 class CommandeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'date_commande', 'montant_total', 'statut', 'assurance')
-    list_filter = ('statut', 'assurance', 'date_commande')
-    search_fields = ('client__username',)
-    actions = ['valider_commandes']
+    list_display = ('id', 'client', 'statut')
+    actions = ['scan_qr_code']
 
-    # Action personnalisée pour valider les commandes sélectionnées
-    def valider_commandes(self, request, queryset):
-        queryset.update(statut='terminee')
-        self.message_user(request, "Les commandes sélectionnées ont été validées.")
-    valider_commandes.short_description = "Valider les commandes sélectionnées"
+    def scan_qr_code(self, request, queryset):
+        """
+        Redirige l'administrateur vers une page où il peut scanner un QR code.
+        """
+        return redirect('admin:scan_qr_page')
 
-    # Ajout d'une URL personnalisée
+    scan_qr_code.short_description = "Scanner un QR code"
+
+    def qr_code_display(self, obj):
+        if obj.qr_code:
+            return format_html('<img src="{}" width="100" height="100" />', obj.qr_code.url)
+        return "Aucun QR Code"
+    qr_code_display.short_description = "QR Code"
+
+    # Ajouter une URL personnalisée dans l'admin
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('scan_qr/', self.admin_site.admin_view(self.scan_qr), name='scan_qr'),
+            path('scan/', self.admin_site.admin_view(self.scan_qr_page), name='scan_qr_page'),
         ]
         return custom_urls + urls
 
-    # Méthode pour scanner et valider une commande via un QR code
-    def scan_qr(self, request):
+    def scan_qr_page(self, request):
+        """
+        Vue pour scanner le QR code.
+        """
         if request.method == "POST":
-            qr_code_data = request.POST.get('qr_code_data')
-            if not qr_code_data:
-                self.message_user(request, "Aucun QR code détecté.", level="error")
-                return render(request, 'admin/scan_qr.html')
-
-            # Extraction de l'ID de la commande depuis les données du QR code
+            # Récupérer l'ID de commande scanné
+            commande_id = request.POST.get('commande_id')
             try:
-                commande_id = int(qr_code_data.split("ID:")[1].split(",")[0])
-                commande = get_object_or_404(Commande, id=commande_id)
-                commande.statut = 'terminee'
+                commande = Commande.objects.get(id=commande_id)
+                commande.statut = 'terminee'  # Change le statut à "Terminée"
                 commande.save()
-                self.message_user(request, f"Commande {commande_id} validée avec succès.")
-            except (IndexError, ValueError):
-                self.message_user(request, "Données du QR code invalides.", level="error")
+                self.message_user(request, f"La commande {commande_id} a été validée.")
+                return redirect('..')  # Retourne à la liste des commandes
             except Commande.DoesNotExist:
-                self.message_user(request, "Commande introuvable.", level="error")
+                self.message_user(request, f"Commande {commande_id} introuvable.", level='error')
 
-        return render(request, 'admin/scan_qr.html')
+        return render(request, 'admin/scan_qr_code.html')
+
+admin.site.register(Commande, CommandeAdmin)
