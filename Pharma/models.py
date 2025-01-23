@@ -14,7 +14,7 @@ class Categorie(models.Model):
 
 class Produit(models.Model):
     name = models.CharField(max_length=100)
-    url_image = models.URLField()
+    url_image = models.FileField(upload_to='img/', blank=True, null=True) 
     prix = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     stock = models.PositiveIntegerField()  # Stock ne peut pas être négatif

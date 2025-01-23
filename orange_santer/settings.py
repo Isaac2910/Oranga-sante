@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     # Custom apps
+    'widget_tweaks',
     
 ]
 
@@ -306,5 +307,5 @@ JAZZMIN_SETTINGS = {
 
 JAZZMIN_UI_TWEAKS = {
    
-    "theme": "darkly",
+    #"theme": "darkly",
 }

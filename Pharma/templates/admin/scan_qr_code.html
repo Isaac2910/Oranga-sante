@@ -1,0 +1,29 @@
+
+
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Scanner un QR code</h1>
+<video id="preview"></video>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" id="order_id" />
+    <button type="submit" style="display:none;" id="submit-btn">Valider la commande</button>
+</form>
+<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<script>
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    scanner.addListener('scan', function (content) {
+        document.getElementById('order_id').value = content.split(':')[1]; // Récupérer l'ID de la commande depuis le QR code
+        document.getElementById('submit-btn').click(); // Soumettre automatiquement
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+        } else {
+            alert("Aucune caméra détectée.");
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+</script>
+{% endblock %}
