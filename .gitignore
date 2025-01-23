@@ -6,6 +6,7 @@ __pycache__/
 # Paramètres locaux ou secrets
 *.env
 sa/
+node_modules/
 
 # Bases de données SQLite
 db.sqlite3
