@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .animate-fade-in-scale {
+        animation: fadeInScale 0.5s ease-out forwards;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen p-4 sm:p-8">
+    <!-- Conteneur principal -->
+    <div
+      id="main-container"
+      class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg opacity-0 transform scale-90"
+    >
+      <!-- En-tête -->
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 text-center">
+          Liste des Produits
+        </h1>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Liste des produits -->
+        <section class="lg:col-span-2 space-y-6" id="product-list">
+          {% for produit in produits %}
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center border border-green-400 rounded-lg p-4 animate-fade-in-scale"
+          >
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://via.placeholder.com/50"
+                alt="{{ produit.name }}"
+                class="w-16 h-16 transition-transform hover:scale-110"
+              />
+              <div>
+                <p class="text-lg font-semibold text-gray-800">
+                  {{ produit.name }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  Prix : <span class="font-bold">{{ produit.prix }} FCFA</span>
+                </p>
+                <p class="text-sm text-gray-600">
+                  Stock : <span class="font-bold">{{ produit.stock }}</span>
+                </p>
+              </div>
+            </div>
+            <form
+              method="post"
+              action="{% url 'ajouter_au_panier' produit.id %}"
+              class="mt-4 sm:mt-0 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4"
+            >
+              {% csrf_token %}
+              <input
+                type="number"
+                name="quantity"
+                id="quantity_{{ produit.id }}"
+                value="1"
+                min="1"
+                max="{{ produit.stock }}"
+                class="w-20 p-2 border rounded text-center"
+              />
+              <button
+                type="submit"
+                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105"
+              >
+                Ajouter au Panier
+              </button>
+            </form>
+          </div>
+          {% empty %}
+          <p class="text-center text-gray-600">Aucun produit disponible.</p>
+          {% endfor %}
+        </section>
+
+        <!-- Résumé du panier -->
+        <aside class="space-y-6">
+          <!-- Totaux -->
+          <div class="bg-blue-500 text-white p-6 rounded-lg shadow hover:scale-105 transition-transform">
+            <h2 class="text-xl font-bold mb-4">Total du Panier</h2>
+            <div class="flex justify-between mb-2">
+              <span>Sous-total :</span>
+              <span>1750 FCFA</span>
+            </div>
+            <div class="flex justify-between mb-2">
+              <span>Frais de Livraison :</span>
+              <span id="shipping-price">Gratuit</span>
+            </div>
+            <div class="flex justify-between text-xl font-bold">
+              <span>Total :</span>
+              <span id="total-price">1750 FCFA</span>
+            </div>
+          </div>
+
+          <!-- Options de Livraison -->
+          <div class="bg-gray-50 p-4 rounded-lg shadow hover:scale-105 transition-transform">
+            <h2 class="text-lg font-bold mb-4">Options de Livraison</h2>
+            <div class="space-y-3">
+              <label class="flex items-center space-x-3">
+                <input
+                  type="radio"
+                  name="livraison"
+                  value="standard"
+                  class="w-5 h-5 text-blue-500"
+                  onclick="updateShipping(1000)"
+                />
+                <span>Standard (1000 FCFA)</span>
+              </label>
+              <label class="flex items-center space-x-3">
+                <input
+                  type="radio"
+                  name="livraison"
+                  value="express"
+                  class="w-5 h-5 text-blue-500"
+                  onclick="updateShipping(2000)"
+                />
+                <span>Express (2000 FCFA)</span>
+              </label>
+              <label class="flex items-center space-x-3">
+                <input
+                  type="radio"
+                  name="livraison"
+                  value="free"
+                  class="w-5 h-5 text-blue-500"
+                  onclick="updateShipping(0)"
+                  checked
+                />
+                <span>Gratuit</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Options de Paiement -->
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              class="flex items-center justify-center bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transform transition hover:scale-105"
+            >
+              <img
+                src="https://via.placeholder.com/40"
+                alt="Gabon Telecom"
+                class="w-8 h-8 mr-2"
+              />
+              Gabon Telecom
+            </button>
+            <button
+              class="flex items-center justify-center bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transform transition hover:scale-105"
+            >
+              <img
+                src="https://via.placeholder.com/40"
+                alt="Airtel"
+                class="w-8 h-8 mr-2"
+              />
+              Airtel
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Script pour les animations -->
+    <script>
+      window.onload = () => {
+        gsap.to("#main-container", {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+      };
+
+      function updateShipping(shippingCost) {
+        const subtotal = 1750;
+        const shippingPriceElement = document.getElementById("shipping-price");
+        const totalPriceElement = document.getElementById("total-price");
+
+        shippingPriceElement.textContent =
+          shippingCost === 0 ? "Gratuit" : `${shippingCost} FCFA`;
+        totalPriceElement.textContent = `${subtotal + shippingCost} FCFA`;
+      }
+    </script>
+  </body>
+</html>

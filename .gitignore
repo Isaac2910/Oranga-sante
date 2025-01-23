@@ -1,3 +1,4 @@
+/node_mudules/
 # Fichiers Python compilés
 *.pyc
 __pycache__/
