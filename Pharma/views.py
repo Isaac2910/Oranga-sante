@@ -3,6 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Produit, Commande, CommandeProduit
 
+
+def page(request):
+    return render(request, 'pharma/base.html')
+
+
 @login_required
 def ajouter_au_panier(request, produit_id):
     """

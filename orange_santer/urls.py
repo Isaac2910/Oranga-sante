@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from Pharma import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('update-profile/', include('auth.urls')),
-    path('f/', include('Pharma.urls')),
+   # path('update-profile/', include('auth.urls')),
+   # path('f/', include('Pharma.urls')),
+    path('', views.page, name='page')
      
 ]
 
