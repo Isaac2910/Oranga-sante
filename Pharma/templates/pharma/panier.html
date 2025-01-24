@@ -25,12 +25,10 @@
   </head>
 
   <body class="bg-gray-100 min-h-screen p-4 sm:p-8">
-    <!-- Conteneur principal -->
     <div
       id="main-container"
       class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg opacity-0 transform scale-90"
     >
-      <!-- En-tête -->
       <header class="mb-8">
         <h1 class="text-3xl font-bold text-blue-600 text-center">
           Liste des Produits
@@ -38,7 +36,6 @@
       </header>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Liste des produits -->
         <section class="lg:col-span-2 space-y-6" id="product-list">
           {% for produit in produits %}
           <div
@@ -51,9 +48,7 @@
                 class="w-16 h-16 transition-transform hover:scale-110"
               />
               <div>
-                <p class="text-lg font-semibold text-gray-800">
-                  {{ produit.name }}
-                </p>
+                <p class="text-lg font-semibold text-gray-800">{{ produit.name }}</p>
                 <p class="text-sm text-gray-600">
                   Prix : <span class="font-bold">{{ produit.prix }} FCFA</span>
                 </p>
@@ -92,12 +87,11 @@
 
         <!-- Résumé du panier -->
         <aside class="space-y-6">
-          <!-- Totaux -->
           <div class="bg-blue-500 text-white p-6 rounded-lg shadow hover:scale-105 transition-transform">
             <h2 class="text-xl font-bold mb-4">Total du Panier</h2>
             <div class="flex justify-between mb-2">
               <span>Sous-total :</span>
-              <span>1750 FCFA</span>
+              <span>{{ commande.montant_total }} FCFA</span>
             </div>
             <div class="flex justify-between mb-2">
               <span>Frais de Livraison :</span>
@@ -105,11 +99,10 @@
             </div>
             <div class="flex justify-between text-xl font-bold">
               <span>Total :</span>
-              <span id="total-price">1750 FCFA</span>
+              <span id="total-price">{{ commande.montant_total }} FCFA</span>
             </div>
           </div>
 
-          <!-- Options de Livraison -->
           <div class="bg-gray-50 p-4 rounded-lg shadow hover:scale-105 transition-transform">
             <h2 class="text-lg font-bold mb-4">Options de Livraison</h2>
             <div class="space-y-3">
@@ -174,7 +167,6 @@
       </div>
     </div>
 
-    <!-- Script pour les animations -->
     <script>
       window.onload = () => {
         gsap.to("#main-container", {
@@ -186,7 +178,7 @@
       };
 
       function updateShipping(shippingCost) {
-        const subtotal = 1750;
+        const subtotal = {{ commande.montant_total }};
         const shippingPriceElement = document.getElementById("shipping-price");
         const totalPriceElement = document.getElementById("total-price");
 

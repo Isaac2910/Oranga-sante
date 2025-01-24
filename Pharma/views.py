@@ -8,6 +8,7 @@ def page(request):
     return render(request, 'pharma/base.html')
 
 
+
 @login_required
 def ajouter_au_panier(request, produit_id):
     """
@@ -44,8 +45,14 @@ def ajouter_au_panier(request, produit_id):
 def panier(request):
     """
     Affiche le panier de l'utilisateur avec les produits ajoutés.
+    Si aucun panier n'est trouvé, affiche un message approprié.
     """
     commande = Commande.objects.filter(client=request.user, statut='en_attente').first()
+
+    if commande is None:
+        # Si la commande n'existe pas, créer une commande vide (optionnel)
+        commande = None
+
     context = {'commande': commande}
     return render(request, 'panier.html', context)
 

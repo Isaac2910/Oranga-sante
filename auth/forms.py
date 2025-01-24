@@ -64,12 +64,16 @@ class CustomLoginForm(LoginForm):
             'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]'
         }),
     )
+    
+    def get_redirect_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url  # Redirige vers l'URL 'next'
+        return super().get_redirect_url() 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Suppression du champ "remember" si présent
-        if 'remember' in self.fields:
-            del self.fields['remember']
+    
+    
+   
 
     
 
