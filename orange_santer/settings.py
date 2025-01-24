@@ -46,20 +46,39 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-#ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-#ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Options: 'mandatory', 'optional', or 'none'
 
-# Redirect settings
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 SITE_ID = 1
+
+
+
+# Paramètres d'authentification de l'utilisateur
+ACCOUNT_EMAIL_REQUIRED = True  # L'email est requis pour l'inscription
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Vérification obligatoire de l'email
+ACCOUNT_AUTHENTICATED_REDIRECT_URL = '/f/produits/'  # Redirection vers la page des produits après la connexion
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # URL de redirection après la déconnexion
+
+# Paramètres de mot de passe
+ACCOUNT_PASSWORD_MIN_LENGTH = 8  # Longueur minimale du mot de passe
+ACCOUNT_PASSWORD_STRENGTH = 'medium'  # Force minimale du mot de passe (faible, moyen, fort)
+
+# Paramètres d'inscription et de connexion sans compte social
+SOCIALACCOUNT_LOGIN_ON_SIGNUP = False  # Pas de connexion automatique via les réseaux sociaux
+SOCIALACCOUNT_QUERY_EMAIL = False  # Pas de demande d'email lors de la connexion via un compte social
+SOCIALACCOUNT_PROVIDERS = {}  # Pas de fournisseurs sociaux
+
+# Configuration de l'URL de connexion et de déconnexion
+LOGIN_REDIRECT_URL = '/f/produits/'  # Redirection vers la page des produits après la connexion
+LOGOUT_REDIRECT_URL = '/'  # URL de redirection après la déconnexion
+
+# Personnalisation de l'interface
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True  # Connexion automatique après la confirmation de l'email
+
+# Gestion des sessions utilisateur
+SESSION_COOKIE_AGE = 3600  # Durée de vie des sessions utilisateur (en secondes)
+
+# Authentification par email
+ACCOUNT_UNIQUE_EMAIL = True  # Assure que l'email est unique
+ACCOUNT_USERNAME_REQUIRED = False  # L'username n'est pas requis si l'email est utilisé comme identifiant
 
 # Middlewares
 MIDDLEWARE = [
@@ -138,6 +157,7 @@ USE_TZ = True
 # Forms and customizations
 ACCOUNT_FORMS = {
     'signup': 'auth.forms.CustomSignupForm',
+    'login': 'auth.forms.CustomLoginForm',
     
 }
 

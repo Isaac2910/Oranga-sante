@@ -77,10 +77,19 @@ def historique(request):
 from django.shortcuts import render
 from .models import Produit
 
-def produits(request):
+from django.shortcuts import render, get_object_or_404
+from .models import Produit
+@login_required
+def produits(request, id=None):
     """
-    Affiche tous les produits disponibles.
+    Affiche tous les produits ou un produit spécifique par son id.
     """
-    produits = Produit.objects.all()
-    context = {'produits': produits}
-    return render(request, 'produits.html', context)
+    if id:
+        produit = get_object_or_404(Produit, id=id)
+        context = {'produit': produit}
+        return render(request, 'produit_detail.html', context)
+    else:
+        produits = Produit.objects.all()
+        context = {'produits': produits}
+        return render(request, 'produits.html', context)
+

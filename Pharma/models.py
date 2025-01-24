@@ -15,7 +15,7 @@ class Categorie(models.Model):
 class Produit(models.Model):
     name = models.CharField(max_length=100)
     url_image = models.FileField(upload_to='img/', blank=True, null=True) 
-    prix = models.DecimalField(max_digits=10, decimal_places=2)
+    prix = models.PositiveIntegerField()
     description = models.TextField()
     stock = models.PositiveIntegerField()  # Stock ne peut pas être négatif
     requiert_ordonnance = models.BooleanField(default=False)
@@ -41,7 +41,7 @@ class Commande(models.Model):
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_commande = models.DateTimeField(auto_now_add=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
-    montant_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    montant_total = models.PositiveIntegerField()
     assurance = models.BooleanField(default=False)
     ordonnance = models.FileField(upload_to='ordonnances/', blank=True, null=True) 
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)

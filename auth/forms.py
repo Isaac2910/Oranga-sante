@@ -47,26 +47,73 @@ class CustomSignupForm(SignupForm):
         return user
 
 #Formulair  login
+
 class CustomLoginForm(LoginForm):
-    email = forms.EmailField(label="Email", max_length=254)
-    password = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Votre email',
+            'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]'
+        }),
+    )
+    password = forms.CharField(
+        label="Mot de passe",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Votre mot de passe',
+            'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]'
+        }),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Personnalisation des champs pour ajouter des classes CSS
-        self.fields['email'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Votre Email'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Mot de passe'})
+        # Suppression du champ "remember" si présent
+        if 'remember' in self.fields:
+            del self.fields['remember']
 
+    
 
 
 from django import forms
-from .models import CustomUser  #
+from .models import CustomUser
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['photo_de_profil', 'date_de_naissance', 'tel', 'adresse','num_assurance']  
+        fields = ['photo_de_profil', 'date_de_naissance', 'tel', 'adresse', 'num_assurance']
         widgets = {
-            'date_de_naissance': forms.DateInput(attrs={'type': 'date'}),
-            'adresse': forms.Textarea(attrs={'rows': 3}),
+            'photo_de_profil': forms.FileInput(attrs={
+                'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]',
+            }),
+            'date_de_naissance': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]',
+            }),
+            'tel': forms.TextInput(attrs={
+                'placeholder': 'Entrez votre numéro de téléphone',
+                'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]',
+            }),
+            'adresse': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Entrez votre adresse complète',
+                'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]',
+            }),
+            'num_assurance': forms.TextInput(attrs={
+                'placeholder': 'Entrez votre numéro d’assurance',
+                'class': 'w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]',
+            }),
         }
+
+    def clean_date_de_naissance(self):
+        date_de_naissance = self.cleaned_data.get('date_de_naissance')
+        if date_de_naissance:
+            from datetime import date
+            if date_de_naissance >= date.today():
+                raise forms.ValidationError("La date de naissance doit être dans le passé.")
+        return date_de_naissance
+
+    def clean_tel(self):
+        tel = self.cleaned_data.get('tel')
+        if tel and not tel.isdigit():
+            raise forms.ValidationError("Le numéro de téléphone ne doit contenir que des chiffres.")
+        return tel
