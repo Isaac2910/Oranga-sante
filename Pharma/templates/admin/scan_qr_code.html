@@ -1,29 +1,66 @@
-
-
-{% extends "admin/base_site.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scanne</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-300">
+    {% extends "admin/base_site.html" %}
 {% block content %}
-<h1>Scanner un QR code</h1>
-<video id="preview"></video>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" id="order_id" />
-    <button type="submit" style="display:none;" id="submit-btn">Valider la commande</button>
-</form>
+<div class="min-h-screen bg-blue-300 flex flex-col items-center justify-center py-10">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
+        <h1 class="text-3xl font-bold text-center text-[#1D82B6] mb-6">
+            Scanner un QR code
+        </h1>
+        <div class="relative w-full border-4 border-dashed border-[#1D82B6] rounded-md mb-6">
+            <video
+                id="preview"
+                class="w-full rounded-md"
+                autoplay
+                muted
+                playsinline
+            ></video>
+        </div>
+        <form method="post" class="flex flex-col items-center">
+            {% csrf_token %}
+            <input
+                type="hidden"
+                name="order_id"
+                id="order_id"
+            />
+            <button
+                type="submit"
+                id="submit-btn"
+                style="display:none;"
+                class="hidden"
+            >
+                Valider la commande
+            </button>
+        </form>
+    </div>
+</div>
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <script>
-    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-    scanner.addListener('scan', function (content) {
-        document.getElementById('order_id').value = content.split(':')[1]; // Récupérer l'ID de la commande depuis le QR code
-        document.getElementById('submit-btn').click(); // Soumettre automatiquement
+    let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
+    scanner.addListener("scan", function (content) {
+        document.getElementById("order_id").value = content.split(":")[1]; // Récupérer l'ID de la commande depuis le QR code
+        document.getElementById("submit-btn").click(); // Soumettre automatiquement
     });
-    Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]);
-        } else {
-            alert("Aucune caméra détectée.");
-        }
-    }).catch(function (e) {
-        console.error(e);
-    });
+    Instascan.Camera.getCameras()
+        .then(function (cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                alert("Aucune caméra détectée.");
+            }
+        })
+        .catch(function (e) {
+            console.error(e);
+        });
 </script>
 {% endblock %}
+
+</body>
+</html>
