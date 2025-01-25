@@ -21,8 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('update-profile/', include('auth.urls')),
+    path('', views.page, name='page'),
     path('f/', include('Pharma.urls')),
-    path('', views.page, name='page')
+
      
 ]
 

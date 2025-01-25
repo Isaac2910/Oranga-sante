@@ -24,9 +24,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+
     'auth',
     'Pharma',
     # Third-party apps
+    
+
+   
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -35,6 +40,12 @@ INSTALLED_APPS = [
     'widget_tweaks',
     
 ]
+
+
+
+
+
+
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, change to SMTP in production
@@ -46,8 +57,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/f/produits/'
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/f/'
+#ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/'
 #ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 #ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
 #ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
@@ -57,7 +68,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Options: 'mandatory', 'optional', or 'none'
 
 # Redirect settings
-LOGIN_REDIRECT_URL = '/f/produits/'
+LOGIN_REDIRECT_URL = '/f/'
 LOGOUT_REDIRECT_URL = '/'
 SITE_ID = 1
 
@@ -73,6 +84,8 @@ MIDDLEWARE = [
 
     'allauth.account.middleware.AccountMiddleware',
     #'allauth.socialaccount.middleware.SocialAccountMiddleware',
+
+
 ]
 
 # Root url configuration
@@ -157,7 +170,7 @@ AUTHALL_EMAIL_VERIFICATION = True  # Active la vérification par email
 AUTHALL_EMAIL_FROM = 'no-reply@votresite.com'  # Adresse d'envoi des emails
 AUTHALL_VERIFICATION_URL = '/auth/verify/'  # URL de vérification
 # Email templates
-ACCOUNT_EMAIL_CONFIRMATION_HTML = "email/confirmation_email.html"
+#ACCOUNT_EMAIL_CONFIRMATION_HTML = "email/confirmation_email.html"
 ACCOUNT_EMAIL_CONFIRMATION = "email/confirmation_email.txt"
 ACCOUNT_PASSWORD_RESET_EMAIL = "email/password_reset_email.txt"
 
@@ -312,3 +325,4 @@ JAZZMIN_UI_TWEAKS = {
    
     #"theme": "darkly",
 }
+

@@ -14,7 +14,7 @@ class Categorie(models.Model):
 
 class Produit(models.Model):
     name = models.CharField(max_length=100)
-    url_image = models.FileField(upload_to='img/', blank=True, null=True) 
+
     prix = models.PositiveIntegerField()
     description = models.TextField()
     stock = models.PositiveIntegerField()  # Stock ne peut pas être négatif
@@ -29,6 +29,15 @@ class Produit(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/produits/{self.id}/"
+
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
 
 class Commande(models.Model):
     STATUT_CHOICES = [
@@ -43,11 +52,13 @@ class Commande(models.Model):
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
     montant_total = models.PositiveIntegerField()
     assurance = models.BooleanField(default=False)
-    ordonnance = models.FileField(upload_to='ordonnances/', blank=True, null=True) 
+    ordonnance = models.FileField(upload_to='ordonnances/', blank=True, null=True)
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Génération du QR code après avoir sauvegardé pour obtenir un ID
+        if self.montant_total <= 0:
+            raise ValueError("Le montant total de la commande doit être positif.")
+        
         if not self.pk:
             super().save(*args, **kwargs)
 
@@ -58,7 +69,7 @@ class Commande(models.Model):
                 box_size=10,
                 border=4,
             )
-            qr_data = f"Commande ID:{self.id}, Client:{self.client.username}, Montant:{self.montant_total}"
+            qr_data = f"Commande ID:{self.id}, Client:{self.client.user.username}, Montant:{self.montant_total}"
             qr.add_data(qr_data)
             qr.make(fit=True)
             img = qr.make_image(fill_color='black', back_color='white')
@@ -70,11 +81,30 @@ class Commande(models.Model):
 
         super().save(*args, **kwargs)
 
-    def calculer_montant_total(self):
-        return sum(item.produit.prix * item.quantity for item in self.commande_produits.all())
+    @property
+    def shipping(self):
+        orderitems = self.commande_produits.all()
+        for item in orderitems:
+            if not item.produit.requiert_ordonnance:
+                return True
+        return False
+
+    @property
+    def get_cart_total(self):
+        orderitems = self.commande_produits.all()
+        total = sum([item.produit.prix * item.quantity for item in orderitems])
+        return total
+
+    @property
+    def get_cart_items(self):
+        orderitems = self.commande_produits.all()
+        return sum([item.quantity for item in orderitems])
 
     def __str__(self):
-        return f"Commande {self.id} - {self.client.username}"
+        return f"Commande {self.id} - {self.client.user.username}"
+
+    def get_absolute_url(self):
+        return f"/commandes/{self.id}/"
 
 
 class CommandeProduit(models.Model):
@@ -85,10 +115,15 @@ class CommandeProduit(models.Model):
     def save(self, *args, **kwargs):
         if self.quantity > self.produit.stock:
             raise ValueError(f"Quantité demandée ({self.quantity}) dépasse le stock disponible ({self.produit.stock}).")
-        # Met à jour le stock après validation
+        
         self.produit.stock -= self.quantity
-        self.produit.save()
+        try:
+            self.produit.save()
+        except Exception as e:
+            raise ValueError(f"Erreur lors de l'enregistrement du produit: {e}")
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.produit.name} x{self.quantity} dans commande {self.commande.id}"
+
+

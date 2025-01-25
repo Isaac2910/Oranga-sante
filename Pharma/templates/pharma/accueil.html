@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -9,239 +10,101 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
-    <style>
-      /* Animation pour faire clignoter le bouton */
-      .blink {
-        animation: blinker 1.5s linear infinite;
-      }
-
-      @keyframes blinker {
-        50% {
-          opacity: 0.5;
-        }
-      }
-    </style>
   </head>
   <body class="font-sans">
     <!-- Header -->
     <header class="bg-white shadow-md">
-      <div
-        class="container mx-auto flex flex-wrap items-center justify-between py-4 px-4 sm:px-6"
-      >
-        <!-- Logo et Navigation -->
-        <div class="flex items-center space-x-4">
-          <img src="logo.png" alt="Logo" class="h-8" />
-        </div>
-
-        <!-- Barre de recherche et icônes -->
-        <div
-          class="hidden md:flex flex-wrap items-center space-x-4 mt-4 md:mt-0"
-        >
-          <input
-            type="text"
-            placeholder="Recherche"
-            class="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      <div class="container mx-auto flex items-center justify-between py-4 px-6">
+        <h1 class="text-2xl font-bold text-[#1D82B6]">Pharmacie</h1>
+        <!-- Boutons dynamiques -->
+        <div class="flex items-center gap-4">
           <button
-            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]"
+            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#166a91]"
+            onclick="openCamera()"
           >
-            Recherche
+            Scanner Ordonnance
           </button>
-          <img src="user-icon.png" alt="User" class="h-8" />
-        </div>
-
-        <!-- Menu burger pour petits écrans -->
-        <button
-          class="block md:hidden text-gray-600 hover:text-[#1D82B6] focus:outline-none"
-          onclick="toggleMenu()"
-        >
-          <i class="bi bi-list text-2xl"></i>
-        </button>
-      </div>
-
-      <!-- Menu déroulant pour les petits écrans -->
-      <div id="mobileMenu" class="hidden md:hidden">
-        <div class="flex flex-col space-y-4 px-4 py-4 bg-gray-100">
-          <input
-            type="text"
-            placeholder="Recherche"
-            class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#174157]"
-          >
-            Recherche
-          </button>
-          <img src="user-icon.png" alt="User" class="h-8 mx-auto" />
+          <!-- Icone du panier -->
+          <a href="{% url 'pharma:panier' %}" class="text-[#1D82B6] text-2xl">
+            <i class="bi bi-cart"></i>
+          </a>
         </div>
       </div>
+      <!-- Menu mobile -->
+      <nav id="mobileMenu" class="hidden bg-[#1D82B6] text-white text-center py-4">
+        <ul>
+          <li class="py-2">
+            <a href="#produits" class="hover:underline">Produits</a>
+          </li>
+          <li class="py-2">
+            <a href="#articles" class="hover:underline">Articles</a>
+          </li>
+          <li class="py-2">
+            <a href="#footer" class="hover:underline">Contact</a>
+          </li>
+        </ul>
+      </nav>
     </header>
 
-    <!-- Boutons fixes -->
-    <button
-      onclick="openCamera()"
-      class="fixed bottom-24 right-5 bg-[#1D82B6] text-white px-2 py-3 rounded-md font-bold hover:bg-[#174157] focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg"
-    >
-      <div class="flex items-center flex-col">
-        <span>Ordonnance</span>
-        <i class="bi bi-qr-code-scan"></i>
-      </div>
-    </button>
-
-    <button
-      onclick="viewCart()"
-      class="fixed bottom-3 right-5 bg-[#1A9F09] text-white px-6 py-3 rounded-md font-bold hover:bg-[#2c8b1f] focus:outline-none focus:ring-4 focus:ring-[#2c8b1f] shadow-lg"
-    >
-      <div class="flex items-center flex-col">
-        <span>Panier</span>
-        <i class="bi bi-bag"></i>
-      </div>
-    </button>
-
     <!-- Hero Section -->
-    <section class="bg-[#1D82B6] text-white py-16 sm:py-28">
-      <div
-        class="container mx-auto flex flex-col-reverse md:flex-row items-center justify-between px-4 sm:px-6 lg:px-8"
-      >
-        <!-- Texte -->
-        <div class="md:w-1/2 text-center md:text-left">
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Votre pharmacie à portée de main
-          </h1>
-          <p class="mb-6 text-sm sm:text-base lg:text-lg leading-relaxed">
-            Scannez vos ordonnances et accédez rapidement à vos médicaments.
-            Améliorez votre parcours de santé avec des réductions exclusives et
-            une accessibilité sans précédent, directement depuis le Gabon.
-          </p>
-          <button
-            class="bg-white text-[#1D82B6] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 transition-all"
-          >
-            Commencer
-          </button>
-        </div>
-
-        <!-- Illustration -->
-        <div class="md:w-1/2 mb-8 md:mb-0">
-          <img
-            src="../../../../static/media/IMAGE.png"
-            alt="Pharmacy Illustration"
-            class="w-4/5 mx-auto md:w-full h-auto"
-          />
-        </div>
+    <section class="bg-[#1D82B6] text-white py-16">
+      <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-4">
+          Bienvenue dans votre pharmacie en ligne
+        </h1>
+        <p class="text-lg">
+          Scannez, commandez et recevez vos médicaments en toute simplicité.
+        </p>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-8 flex justify-center">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center"
-        >
-          <!-- Carte 1 -->
-          <div
-            class="bg-[#BFE5C7] p-6 shadow rounded-lg hover:shadow-lg transition"
-          >
-            <p class="font-semibold text-black">
-              Obtenez 25% de <br />
-              Réduction
-            </p>
-          </div>
-          <!-- Carte 2 -->
-          <div
-            class="bg-[#FAEDC9] p-6 shadow rounded-lg hover:shadow-lg transition"
-          >
-            <p class="font-semibold text-black">
-              Livraison à Domicile<br />
-              Gratuite
-            </p>
-          </div>
-          <!-- Carte 3 -->
-          <div
-            class="bg-[#C5EF99] p-6 shadow rounded-lg hover:shadow-lg transition"
-          >
-            <p class="font-semibold text-black">
-              Rendez-vous avec<br />
-              un Médecin
-            </p>
-          </div>
-          <!-- Carte 4 -->
-          <div
-            class="bg-[#ECC5FF] p-6 shadow rounded-lg hover:shadow-lg transition"
-          >
-            <p class="font-semibold text-black">
-              Conseils de<br />
-              Santé
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="py-16">
+    <!-- Produits -->
+    <section id="produits" class="py-16">
       <div class="container mx-auto">
         <h2 class="text-3xl font-bold text-center mb-10">
-          Nouveaux Produits Disponibles au Gabon
+          Produits Disponibles
         </h2>
-        <div
-          class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        >
-          <!-- Product Card -->
-          <div
-            class="bg-white shadow-lg rounded-lg p-4 text-center hover:shadow-xl transition"
-          >
-            <img src="panadol.png" alt="Panadol" class="mx-auto h-40 mb-4" />
-            <h2 class="text-lg font-semibold text-gray-800">Panadol</h2>
-            <p class="text-gray-600 mt-2 text-lg font-medium">2500 FCFA</p>
-            <button
-              class="bg-[#1A9F09] text-white px-4 py-2 rounded-lg hover:scale-105"
-            >
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {% for produit in produits %}
+          <div class="bg-white shadow rounded-lg p-4 text-center hover:shadow-lg">
+            <!-- Condition pour afficher une image par défaut si aucune image n'est disponible -->
+            {% if produit.url_image %}
+            <img
+              src="{{ produit.url_image.url }}"
+              alt="{{ produit.name }}"
+              class="h-40 mx-auto mb-4"
+            />
+            {% else %}
+            <img
+              src="/static/images/default.jpg"
+              alt="Image par défaut"
+              class="h-40 mx-auto mb-4"
+            />
+            {% endif %}
+            <h3 class="text-lg font-semibold">{{ produit.name }}</h3>
+            <p class="text-gray-600">{{ produit.description }}</p>
+            <p class="text-lg font-bold text-[#1D82B6]">
+              {{ produit.prix }} FCFA
+            </p>
+            <button class="btn-ajouter-panier bg-blue-500 text-white px-4 py-2 rounded mt-2"
+              data-produit-id="{{ produit.id }}"
+              data-quantite="1">
               Ajouter au panier
             </button>
           </div>
-          <!-- Repeat Product Card as needed -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Articles Section -->
-    <section class="py-16 bg-gray-100">
-      <div class="container mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-10">
-          Nos Dernières Nouvelles & Articles
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          <!-- Article Card -->
-          <div
-            class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
-          >
-            <div class="bg-gray-50 h-40 mb-4 rounded-md">
-              <img class="w-full h-full mb-1 rounded-md" src="" alt="" />
-            </div>
-            <h3 class="font-bold text-lg text-[#1D82B6]">
-              Découvrez un trésor d'astuces pratiques pour améliorer la santé au
-              Gabon
-            </h3>
-            <p class="text-gray-600 text-sm mb-4">11 janv 2025</p>
-            <button
-              class="bg-[#1A9F09] text-white px-4 py-2 rounded-lg hover:bg-[#2c8b1f]"
-            >
-              Lire plus
-            </button>
-          </div>
+          {% endfor %}
         </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#1D82B6] text-white text-center py-8">
-      <p class="text-lg font-medium">
-        © 2025 <span class="text-[#43BC84]">Oranga</span>
-        <span class="text-[#FBE79A]">Santé</span> - Tous droits réservés.
-      </p>
+    <footer id="footer" class="bg-[#1D82B6] text-white text-center py-8">
+      <p>© 2025 Oranga Santé - Tous droits réservés.</p>
     </footer>
 
     <script>
+      let cart = [];
+
       function toggleMenu() {
         const menu = document.getElementById("mobileMenu");
         menu.classList.toggle("hidden");
@@ -249,13 +112,50 @@
 
       function openCamera() {
         alert("Ouverture de la caméra pour scanner l'ordonnance.");
-        // Ajoutez ici la logique pour ouvrir la caméra et scanner un QR code.
       }
 
-      function viewCart() {
-        alert("Ouverture du panier.");
-        // Ajoutez ici la logique pour afficher le panier.
-      }
+      document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour envoyer une requête AJAX pour ajouter au panier
+        async function addToCart(url, produitId, quantite = 1) {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ produit_id: produitId, quantite: quantite })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            alert(data.message);
+
+            // Mettre à jour l'affichage du panier si nécessaire
+            const totalElement = document.querySelector('#total-price');
+            if (totalElement) {
+              totalElement.innerText = `${data.total.toFixed(2)} FCFA`;
+            }
+
+            // Afficher la quantité mise à jour (si nécessaire)
+            const quantiteElement = document.querySelector(`#quantite-${produitId}`);
+            if (quantiteElement) {
+              quantiteElement.innerText = data.produit.quantite;
+            }
+          } else {
+            alert(data.message);
+          }
+        }
+
+        // Ajouter un gestionnaire d'événements pour les boutons "Ajouter au panier"
+        document.querySelectorAll('.btn-ajouter-panier').forEach(button => {
+          button.addEventListener('click', function () {
+            const produitId = this.dataset.produitId;
+            const url = `/f/ajouter-au-panier/${produitId}/`;  // Correction de l'URL
+            const quantite = this.dataset.quantite || 1;  // Quantité par défaut : 1
+            addToCart(url, produitId, quantite);
+          });
+        });
+      });
     </script>
   </body>
 </html>

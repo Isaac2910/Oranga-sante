@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture - Commande {{ commande.id }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-header h1 {
+            margin: 0;
+        }
+        .invoice-details {
+            margin-top: 30px;
+        }
+        .invoice-details th, .invoice-details td {
+            padding: 8px;
+            text-align: center;
+        }
+        .invoice-footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <h1>Facture</h1>
+                <p><strong>Commande ID :</strong> {{ commande.id }}</p>
+                <p><strong>Date de la commande :</strong> {{ commande.date_creation|date:"d M Y" }}</p>
+            </div>
+
+            <!-- Détails de la commande -->
+            <div class="invoice-details">
+                <h3>Détails de la commande</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix Unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in commande.commandeproduit_set.all %}
+                        <tr>
+                            <td>{{ item.produit.nom }}</td>
+                            <td>{{ item.produit.prix|floatformat:2 }} €</td>
+                            <td>{{ item.quantite }}</td>
+                            <td>{{ item.produit.prix|floatformat:2|add:0.0|mul:item.quantite }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Total général -->
+                <h4 class="text-end">Total : <strong>{{ commande.total|floatformat:2 }} €</strong></h4>
+            </div>
+
+            <!-- QR Code -->
+            <div class="invoice-footer">
+                <h3>QR Code</h3>
+                <p>Scannez ce QR code pour obtenir plus d'informations sur votre commande :</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ request.build_absolute_uri }}&size=200x200" alt="QR Code">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
