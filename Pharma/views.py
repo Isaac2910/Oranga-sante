@@ -28,6 +28,8 @@ def produit_list(request):
     produits = Produit.objects.all()
     return render(request, 'pharma/accueil.html', {'produits': produits})
 
+
+#Ajouter au panier
 @login_required
 def ajouter_au_panier(request, produit_id):
     if request.method == 'POST':
@@ -148,91 +150,6 @@ def reduire_quantite(request, produit_id):
     return JsonResponse({'success': False, 'message': "Requête invalide."}, status=400)
 
 
-# Confirmer la commande
-
-@login_required
-def passer_au_paiement(request):
-    panier = request.session.get('panier', {})
-
-    # Vérifier que le panier n'est pas vide
-    if not panier:
-        messages.error(request, "Votre panier est vide. Ajoutez des produits avant de passer au paiement.")
-        return redirect('panier')
-
-    # Vérifier les stocks des produits dans le panier
-    produits_indisponibles = []
-    for produit_id, details in panier.items():
-        produit = get_object_or_404(Produit, id=produit_id)
-        if details['quantite'] > produit.stock:
-            produits_indisponibles.append(produit.nom)
-
-    # Si des produits sont indisponibles, afficher un message d'erreur
-    if produits_indisponibles:
-        messages.error(
-            request,
-            f"Les produits suivants ne sont pas disponibles en quantité suffisante : {', '.join(produits_indisponibles)}."
-        )
-        return redirect('panier')
-
-    # Créer une commande pour l'utilisateur
-    commande = Commande.objects.create(user=request.user, date_commande=now())
-
-    # Ajouter les produits de la commande
-    for produit_id, details in panier.items():
-        produit = get_object_or_404(Produit, id=produit_id)
-        CommandeProduit.objects.create(
-            commande=commande,
-            produit=produit,
-            quantite=details['quantite'],
-            prix_unitaire=details['prix']
-        )
-
-        # Réduire le stock du produit
-        produit.stock -= details['quantite']
-        produit.save()
-
-    # Vider le panier après validation
-    request.session['panier'] = {}
-
-    # Rediriger vers une page de confirmation ou de paiement
-    messages.success(request, "Votre commande a été enregistrée avec succès. Procédez au paiement.")
-    return redirect('page_paiement')  # Remplacez 'page_paiement' par l'URL de votre page de paiement
-
-
-from django.shortcuts import redirect
-
-@login_required
-def valider_paiement(request):
-    if request.method == 'POST':
-        # Exemple de création de commande après validation du paiement
-        commande = Commande.objects.create(
-            utilisateur=request.user,
-            total=request.POST.get('total'),
-            statut='payée'
-        )
-
-        # Ajouter les produits du panier à la commande
-        panier = request.session.get('panier', {})
-        for produit_id, details in panier.items():
-            produit = Produit.objects.get(id=produit_id)
-            CommandeProduit.objects.create(
-                commande=commande,
-                produit=produit,
-                quantite=details['quantite']
-            )
-            # Mettre à jour le stock du produit
-            produit.stock -= details['quantite']
-            produit.save()
-
-        # Vider le panier
-        request.session['panier'] = {}
-
-        # Rediriger vers la facture
-        return redirect('facture', commande_id=commande.id)
-
-    messages.error(request, "Une erreur est survenue.")
-    return redirect('paiement')
-
 #######
 
 from django.http import JsonResponse
@@ -272,7 +189,7 @@ def supprimer_produit(request, produit_id):
             'success': False,
             'message': 'Méthode non autorisée.'
         }, status=405)
-
+#vider
 @login_required
 def vider_panier(request):
     if request.method == 'POST':
@@ -283,36 +200,170 @@ def vider_panier(request):
 ####""
 
 
-# Afficher la facture avec QR code
+
+################
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Produit, Commande, CommandeProduit
+import qrcode
+from io import BytesIO
+from datetime import datetime
+import json
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 @login_required
-def facture(request, commande_id):
-    commande = get_object_or_404(Commande, id=commande_id)
-    qr_data = f"Commande ID:{commande.id}, Client:{commande.client.username}, Montant:{commande.montant_total}"
-    
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(qr_data)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color='black', back_color='white')
-    
-    # Convertir l'image en fichier pour l'afficher dans la facture
-    buffer = BytesIO()
-    img.save(buffer)
-    qr_code_image = File(buffer, name=f"commande_{commande.id}_qr.png")
-    
-    return render(request, 'facture.html', {'commande': commande, 'qr_code': qr_code_image})
+def paiement(request):
+    panier = request.session.get('panier', {})
+    if not panier:
+        messages.error(request, "Votre panier est vide.")
+        return redirect('pharma:accueil')  # Remplacez par le nom correct de l'URL
 
-# Afficher les détails d'un produit
+    try:
+        # Calculer le total en vérifiant les clés
+        total = sum(
+            float(item.get('prix', 0)) * int(item.get('quantite', 0))
+            for item in panier.values()
+        )
+
+        # Sauvegarder les données de paiement dans la session
+        request.session['paiement_valide'] = {
+            'total': total,
+            'panier': panier,
+        }
+
+        # Afficher un message de succès
+        messages.success(request, f"Paiement validé pour un total de {total:.2f} FCFA.")
+        return redirect('pharma:generer_facture')  # Remplacez par le nom correct de l'URL
+
+    except Exception as e:
+        # Afficher un message d'erreur avec détails
+        messages.error(request, f"Erreur lors du paiement : {str(e)}")
+        return redirect('pharma:accueil')  # Remplacez par le nom correct de l'URL
+
+
+##########facture
+import base64
+
 @login_required
-def detail_produit(request, produit_id):
-    produit = get_object_or_404(Produit, id=produit_id)
+def generer_facture(request):
+    paiement_data = request.session.get('paiement_valide', None)
+    if not paiement_data:
+        messages.error(request, "Aucune transaction trouvée.")
+        return redirect('pharma:panier')
 
-    # Vous pouvez aussi récupérer des informations comme les avis, les produits similaires, etc.
-    # Par exemple, si vous avez un modèle d'avis :
-    # avis = Avis.objects.filter(produit=produit)
+    try:
+        # Vérification que le total est un nombre valide
+        total = float(paiement_data.get('total', 0))
+        panier = paiement_data['panier']
 
-    return render(request, 'pharma/detail_produit.html', {'produit': produit})
+        # Vérification s'il existe déjà une commande en cours pour l'utilisateur
+        commande = Commande.objects.filter(client=request.user, statut='en_attente').first()
+
+        if not commande:
+            # Création de la commande
+            commande = Commande.objects.create(client=request.user, total=total)
+
+        produits = []
+        for produit_id, details in panier.items():
+            produit = get_object_or_404(Produit, id=produit_id)
+
+            # Vérification de la quantité de stock avant mise à jour
+            if produit.stock >= details['quantite']:  # Utilisation de 'quantite' ici
+                # Ajouter le produit à la commande
+                CommandeProduit.objects.create(
+                    commande=commande,
+                    produit=produit,
+                    quantity=details['quantite'],  # Utilisation de 'quantite' ici aussi
+                )
+
+                produits.append({
+                    'name': produit.name,
+                    'prix': produit.prix,
+                    'quantite': details['quantite'],  # 
+                    'total': produit.prix * details['quantite'],
+                })
+
+                # Mise à jour du stock
+                produit.stock -= details['quantite']  # Utilisation de 'quantite' ici aussi
+                produit.save()
+            else:
+                # Stock insuffisant pour effectuer la commande
+                messages.error(request, f"Le produit {produit.name} n'a pas suffisamment de stock.")
+                return redirect('pharma:panier')
+
+        # Génération du QR Code
+        qr_data = {
+            "commande_id": commande.id,
+            "total": total,
+            "client": request.user.username,
+        }
+        qr = qrcode.make(json.dumps(qr_data))
+        qr_buffer = BytesIO()
+        qr.save(qr_buffer)
+        qr_buffer.seek(0)
+        qr_code_url = f"data:image/png;base64,{base64.b64encode(qr_buffer.getvalue()).decode('utf-8')}"
+
+        # Supprimer le panier de la session
+        request.session['panier'] = {}
+
+        # Rendu de la page facture
+        return render(request, 'pharma/facture.html', {
+            'commande': commande,
+            'produits': produits,
+            'qr_code_url': qr_code_url,
+            'current_year': datetime.now().year,
+        })
+
+    except Exception as e:
+        messages.error(request, f"Erreur lors de la génération de la facture : {e}")
+        return redirect('pharma:panier')
+
+
+
+@login_required
+def historique_commandes(request):
+    commandes = Commande.objects.filter(client=request.user).order_by('-date_commande')  # Récupère toutes les commandes de l'utilisateur
+    return render(request, 'pharma/historique.html', {
+        'commandes': commandes
+    })
+    
+    
+    
+import qrcode
+import base64
+from io import BytesIO
+from django.shortcuts import render, get_object_or_404
+
+@login_required
+def details_commande(request, commande_id):
+    commande = get_object_or_404(Commande, id=commande_id, client=request.user)
+    produits = commande.commande_produits.all()
+
+    # Calcul du total pour chaque produit
+    for produit in produits:
+        produit.total_prix = produit.quantity * produit.produit.prix
+
+    # Inclure le nom du client dans les données du QR code
+    client_name = commande.client.get_full_name()  # ou utilisez commande.client.username selon votre modèle
+    qr_data = f"Commande ID: {commande.id} - Client: {client_name} - Total: {commande.total}€"
+
+    # Générer le QR code avec les nouvelles données
+    qr_img = qrcode.make(qr_data)
+
+    # Convertir l'image en base64
+    img_io = BytesIO()
+    qr_img.save(img_io, 'PNG')
+    img_io.seek(0)
+    qr_code_base64 = base64.b64encode(img_io.read()).decode('utf-8')
+
+    return render(request, 'pharma/details_commande.html', {
+        'commande': commande,
+        'produits': produits,
+        'qr_code_base64': qr_code_base64,  # Passer l'image du QR code en base64 au template
+    })

@@ -1,29 +1,44 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historique des commandes</title>
+    <title>Historique des Commandes</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-blue-300">
 
-<h1 class="text-4xl text-center text-[#1D82B6] font-extrabold mt-10">Historique des commandes</h1>
+<h1 class="text-4xl text-center text-[#1D82B6] font-extrabold mt-10">Historique des Commandes</h1>
 <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl mt-10 p-8">
-    {% for commande in commandes %}
+    {% if commandes %}
+        {% for commande in commandes %}
         <div class="border-b border-gray-300 py-6 flex justify-between items-center">
             <div>
-                <p class="text-lg text-gray-700">Commande ID : <span class="font-bold text-[#1D82B6]">{{ commande.id }}</span></p>
-                <p class="text-gray-600">Date : <span class="font-medium text-[#1D82B6]">{{ commande.date_commande }}</span></p>
-                <p class="text-gray-600">Montant Total : <span class="font-medium text-[#1D82B6]">{{ commande.montant_total }}</span></p>
-                <p class="text-gray-600">Statut : <span class="font-medium text-[#43BC84]">{{ commande.statut }}</span></p>
+                <p class="text-lg text-gray-700">Commande ID : 
+                    <span class="font-bold text-[#1D82B6]">{{ commande.id }}</span>
+                </p>
+                <p class="text-gray-600">Date : 
+                    <span class="font-medium text-[#1D82B6]">{{ commande.date_creation|date:"d/m/Y H:i" }}</span>
+                </p>
+                <p class="text-gray-600">Montant Total : 
+                    <span class="font-medium text-[#1D82B6]">{{ commande.total }} FCFA</span>
+                </p>
+                <p class="text-gray-600">Statut : 
+                    <span class="font-medium {% if commande.statut == 'livrée' %}text-[#43BC84]{% else %}text-[#FF5733]{% endif %}">
+                        {{ commande.get_statut_display }}
+                    </span>
+                </p>
             </div>
-            <button class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#166a94]">Voir détails</button>
+            <a href="{% url 'pharma:details_commande' commande.id %}" 
+               class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+                Voir détails
+            </a>
         </div>
-    {% empty %}
+        {% endfor %}
+    {% else %}
         <p class="text-center text-gray-500 italic text-lg">Aucune commande disponible.</p>
-    {% endfor %}
+    {% endif %}
 </div>
 
 </body>

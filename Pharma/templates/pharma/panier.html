@@ -14,6 +14,15 @@
             <h1 class="text-3xl font-bold text-blue-600 text-center">Panier</h1>
         </header>
 
+            {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Produits dans le panier -->
             <section class="lg:col-span-2 space-y-6">
@@ -58,6 +67,13 @@
                     <div class="mt-4">
                         <button class="btn-vider bg-red-600 text-white w-full py-2 rounded">Vider le panier</button>
                     </div>
+
+                   
+                    <form action="{% url 'pharma:paiement' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Passer au paiement</button>
+                    </form>
+                    
                 </div>
             </aside>
         </div>

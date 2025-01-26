@@ -3,88 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facture - Commande {{ commande.id }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Facture</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            padding-top: 50px;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
         }
-        .invoice-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .invoice-header {
+        .header {
             text-align: center;
             margin-bottom: 20px;
         }
-        .invoice-header h1 {
+        .header h1 {
             margin: 0;
+            color: #333;
         }
-        .invoice-details {
-            margin-top: 30px;
+        .header p {
+            color: #777;
         }
-        .invoice-details th, .invoice-details td {
-            padding: 8px;
+        .facture-details, .produits-details {
+            margin-bottom: 20px;
+        }
+        .facture-details p, .produits-details p {
+            margin: 5px 0;
+        }
+        .produits-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .produits-table th, .produits-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .produits-table th {
+            background-color: #f4f4f4;
+        }
+        .qr-code {
             text-align: center;
+            margin-top: 20px;
         }
-        .invoice-footer {
-            margin-top: 30px;
+        .qr-code img {
+            width: 150px;
+            height: 150px;
+        }
+        .footer {
             text-align: center;
+            margin-top: 20px;
+            color: #777;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="invoice-container">
-            <div class="invoice-header">
-                <h1>Facture</h1>
-                <p><strong>Commande ID :</strong> {{ commande.id }}</p>
-                <p><strong>Date de la commande :</strong> {{ commande.date_creation|date:"d M Y" }}</p>
-            </div>
+        <!-- En-tête de la facture -->
+        <div class="header">
+            <h1>Facture</h1>
+            <p>Commande #{{ commande.id }}</p>
+        </div>
 
-            <!-- Détails de la commande -->
-            <div class="invoice-details">
-                <h3>Détails de la commande</h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Produit</th>
-                            <th>Prix Unitaire</th>
-                            <th>Quantité</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in commande.commandeproduit_set.all %}
-                        <tr>
-                            <td>{{ item.produit.nom }}</td>
-                            <td>{{ item.produit.prix|floatformat:2 }} €</td>
-                            <td>{{ item.quantite }}</td>
-                            <td>{{ item.produit.prix|floatformat:2|add:0.0|mul:item.quantite }} €</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <!-- Détails de la facture -->
+        <div class="facture-details">
+            <h2>Détails du client</h2>
+            <p><strong>Client :</strong> {{ user.username }}</p>
+            <p><strong>Date :</strong> {{ commande.date_commande }}</p>
+            <p><strong>Total :</strong> {{ commande.total }} FCFA</p>
+        </div>
 
-                <!-- Total général -->
-                <h4 class="text-end">Total : <strong>{{ commande.total|floatformat:2 }} €</strong></h4>
-            </div>
+        <!-- Détails des produits -->
+        <div class="produits-details">
+            <h2>Produits commandés</h2>
+            <table class="produits-table">
+                <thead>
+                    <tr>
+                        <th>Nom du produit</th>
+                        <th>Prix unitaire (FCFA)</th>
+                        <th>Quantité</th>
+                        <th>Total (FCFA)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in produits %}
+                    <tr>
+                        <td>{{ produit.name }}</td>
+                        <td>{{ produit.prix }}</td>
+                        <td>{{ produit.quantite }}</td>
+                        <td>{{ produit.total|floatformat:2 }}</td>
+                       
 
-            <!-- QR Code -->
-            <div class="invoice-footer">
-                <h3>QR Code</h3>
-                <p>Scannez ce QR code pour obtenir plus d'informations sur votre commande :</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ request.build_absolute_uri }}&size=200x200" alt="QR Code">
-            </div>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-code">
+            <h2>QR Code</h2>
+            <img src="{{ qr_code_url }}" alt="QR Code de la facture">
+        </div>
+
+        <!-- Pied de page -->
+        <div class="footer">
+            <p>Merci pour votre achat chez nous !</p>
+            <p>&copy; {{ current_year }} MonEntreprise. Tous droits réservés.</p>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
