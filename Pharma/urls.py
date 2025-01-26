@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 app_name = 'pharma'
 
 urlpatterns = [
@@ -21,8 +24,15 @@ urlpatterns = [
 
     # URL pour afficher les détails d'une commande spécifique
     path('commande/<int:commande_id>/', views.details_commande, name='details_commande'),
+    
+    
+    path('articles/<int:pk>/', views.article_detail, name='article_detail'),  # URL pour le détail
   
 
 
     
-]
+]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+

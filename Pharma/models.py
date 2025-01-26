@@ -14,6 +14,7 @@ class Categorie(models.Model):
 
 class Produit(models.Model):
     name = models.CharField(max_length=100)
+    url_image = models.ImageField(upload_to='produits/', blank=True, null=True)
 
     prix = models.PositiveIntegerField()
     description = models.TextField()
@@ -80,6 +81,28 @@ class Commande(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def shipping(self):
+        orderitems = self.commande_produits.all()
+        for item in orderitems:
+            if not item.produit.requiert_ordonnance:
+                return True
+        return False
+
+
+
+    @property
+    def get_cart_total(self):
+        orderitems = self.commande_produits.all()
+        total = 0
+        for item in orderitems:
+            # Vérification que le prix et la quantité sont des valeurs valides
+            if isinstance(item.produit.prix, (int, float)) and isinstance(item.quantity, int):
+                total += item.produit.prix * item.quantity
+            else:
+                raise ValueError(f"Erreur avec les valeurs du produit {item.produit.name}: prix ou quantité invalide.")
+        return total
+
 
     def __str__(self):
         return f"Commande {self.id} - {self.client.username}"
@@ -112,3 +135,11 @@ class CommandeProduit(models.Model):
         return f"{self.produit.name} x{self.quantity} dans commande {self.commande.id}"
     # Mise à jour du stock du produit
 
+class Article(models.Model):
+    titre = models.CharField(max_length=200)
+    contenu = models.TextField()
+    date_publication = models.DateField(auto_now_add=True)
+    image = models.ImageField(upload_to="articles/")
+    
+    def __str__(self):
+        return self.titre

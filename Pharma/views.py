@@ -26,7 +26,8 @@ def page(request):
 @login_required
 def produit_list(request):
     produits = Produit.objects.all()
-    return render(request, 'pharma/accueil.html', {'produits': produits})
+    articles = Article.objects.all() 
+    return render(request, 'pharma/accueil.html', {'produits': produits, 'articles': articles})
 
 
 #Ajouter au panier
@@ -366,4 +367,21 @@ def details_commande(request, commande_id):
         'commande': commande,
         'produits': produits,
         'qr_code_base64': qr_code_base64,  # Passer l'image du QR code en base64 au template
+    })
+
+from django.shortcuts import render
+from .models import Article
+
+
+
+
+
+
+
+def article_detail(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    related_articles = Article.objects.exclude(pk=pk)[:3]  # Les 3 articles similaires
+    return render(request, "articles/article_detail.html", {
+        "article": article,
+        "related_articles": related_articles,
     })

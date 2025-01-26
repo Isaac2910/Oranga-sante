@@ -75,3 +75,9 @@ class CommandeAdmin(admin.ModelAdmin):
         return render(request, 'admin/scan_qr_code.html')
 
 admin.site.register(Commande, CommandeAdmin)
+
+
+from django.contrib import admin
+from .models import Article
+
+admin.site.register(Article)

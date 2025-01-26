@@ -1,4 +1,6 @@
 {% load static %}
+
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -19,9 +21,14 @@
         <!-- Lien vers l'historique des commandes -->
         <div class="text-center mt-6">
           <a href="{% url 'pharma:historique' %}" 
-            class="bg-[#1D82B6] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#166a94]">
+            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
               Voir  les commandes
           </a>
+
+          
+
+
+
         </div>
         <!-- Boutons dynamiques -->
         <div class="flex items-center gap-4">
@@ -31,6 +38,12 @@
           >
             Scanner Ordonnance
           </button>
+          <a
+            href="{% url 'account_logout' %}"
+            class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
+          >
+            Déconnexion
+          </a>
           <!-- Icone du panier -->
           <a href="{% url 'pharma:panier' %}" class="text-[#1D82B6] text-2xl">
             <i class="bi bi-cart"></i>
@@ -74,7 +87,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {% for produit in produits %}
           <div class="bg-white shadow rounded-lg p-4 text-center hover:shadow-lg">
-            <!-- Condition pour afficher une image par défaut si aucune image n'est disponible -->
+            <!-- Vérification de l'image du produit -->
             {% if produit.url_image %}
             <img
               src="{{ produit.url_image.url }}"
@@ -83,7 +96,7 @@
             />
             {% else %}
             <img
-              src="/static/images/default.jpg"
+              src="{% static '../../../../static/media/logo.png' %}"
               alt="Image par défaut"
               class="h-40 mx-auto mb-4"
             />
@@ -104,24 +117,79 @@
       </div>
     </section>
 
+
+    <!-- Articles Section -->
+    <section class="py-16 bg-gray-100">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-10">
+          Nos Dernières Nouvelles & Articles
+        </h2>
+        {% if articles %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {% for article in articles %}
+          <!-- Article Card -->
+          <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition">
+            <div class="bg-gray-50 h-40 mb-4 rounded-md">
+              <img class="w-full h-full mb-1 rounded-md" src="{{ article.image.url }}" alt="{{ article.titre }}" />
+            </div>
+            <h3 class="font-bold text-lg text-[#1D82B6]">
+              {{ article.titre }}
+            </h3>
+            <p class="text-gray-600 text-sm mb-4">
+              {{ article.date_publication|date:"d M Y" }}
+            </p>
+            <a href="{% url 'pharma:article_detail' pk=article.pk %}">Voir l'article</a>
+
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>Aucun article disponible pour le moment.</p>
+        {% endif %}
+      </div>
+    </section>
+
+
+
+
+
+
+
     <!-- Footer -->
     <footer id="footer" class="bg-[#1D82B6] text-white text-center py-8">
       <p>© 2025 Oranga Santé - Tous droits réservés.</p>
     </footer>
 
+    <!-- Modal pour ajouter au panier -->
+    <div id="cartModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+        <h3 class="text-lg font-semibold">Produit ajouté au panier</h3>
+        <p id="cartMessage" class="mt-2 text-gray-600"></p>
+        <button id="closeModal" class="mt-4 px-6 py-2 bg-[#1D82B6] text-white rounded-lg">
+          Fermer
+        </button>
+      </div>
+    </div>
+
     <script>
-      let cart = [];
-
-      function toggleMenu() {
-        const menu = document.getElementById("mobileMenu");
-        menu.classList.toggle("hidden");
-      }
-
-      function openCamera() {
-        alert("Ouverture de la caméra pour scanner l'ordonnance.");
-      }
-
       document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour afficher le modal
+        function showModal(message) {
+          const modal = document.getElementById('cartModal');
+          const cartMessage = document.getElementById('cartMessage');
+          cartMessage.textContent = message;
+          modal.classList.remove('hidden');  // Affiche le modal
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+          const modal = document.getElementById('cartModal');
+          modal.classList.add('hidden');  // Cache le modal
+        }
+
+        // Ajouter un gestionnaire d'événements pour fermer le modal
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
         // Fonction pour envoyer une requête AJAX pour ajouter au panier
         async function addToCart(url, produitId, quantite = 1) {
           const response = await fetch(url, {
@@ -135,7 +203,7 @@
 
           const data = await response.json();
           if (data.success) {
-            alert(data.message);
+            showModal(data.message);  // Affiche le message de succès dans le modal
 
             // Mettre à jour l'affichage du panier si nécessaire
             const totalElement = document.querySelector('#total-price');
@@ -149,7 +217,7 @@
               quantiteElement.innerText = data.produit.quantite;
             }
           } else {
-            alert(data.message);
+            showModal(data.message);  // Affiche le message d'erreur dans le modal
           }
         }
 
