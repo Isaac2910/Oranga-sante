@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Confirmation de votre adresse email{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-4xl modal-open">
+        <h2 class="text-4xl font-extrabold text-[#1D82B6] text-center mb-8">{% block header %}Merci de vous être inscrit !{% endblock %}</h2>
+
+        <p class="text-center text-gray-600">{% block content %}Pour confirmer votre adresse email, cliquez sur le lien ci-dessous :{% endblock %}</p>
+
+        <div class="flex justify-center mt-6">
+            <a href="{{ account_signup }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
+                Confirmer mon adresse email
+            </a>
+        </div>
+
+        <p class="text-center text-gray-600 mt-6">{% block footer %}Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.{% endblock %}</p>
+    </div>
+
+</body>
+</html>

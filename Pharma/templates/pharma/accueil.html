@@ -1,0 +1,297 @@
+{% load static %}
+
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pharmacie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  </head>
+  <body class="font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+      <div class="container mx-auto flex items-center gap-2 justify-between py-4 px-6">
+        
+        <h1 class="text-2xl font-bold text-[#1D82B6]">Oranga Sante</h1>
+
+        
+        <!-- Lien vers l'historique des commandes -->
+        <div class="flex text-center">
+          <a href="{% url 'pharma:historique' %}" 
+            class="bg-[#1D82B6]  text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+              Voir  mes commandes
+          </a>
+
+          
+
+
+
+        </div>
+        <!-- Boutons dynamiques -->
+        <div class="flex items-center gap-4">
+          <button
+            class="bg-[#1D82B6] text-white px-4 py-2 rounded-lg hover:bg-[#166a91]"
+            onclick="openCamera()"
+          >
+            Scanner Ordonnance
+          </button>
+          <a
+            href="{% url 'account_logout' %}"
+            class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
+          >
+            Déconnexion
+          </a>
+          <!-- Icone du panier -->
+          <a href="{% url 'pharma:panier' %}" class="text-[#1D82B6] text-2xl">
+            <i class="bi bi-cart"></i>
+          </a>
+          <!-- le profil -->
+          <a href="{% url 'profil' %}"><i class="fa-solid fa-user-circle text-gray-500 text-4xl"></i>
+          </a>
+        </div>
+      </div>
+      <!-- Menu mobile -->
+      <nav id="mobileMenu" class="hidden bg-[#1D82B6] text-white text-center py-4">
+        <ul>
+          <li class="py-2">
+            <a href="#produits" class="hover:underline">Produits</a>
+          </li>
+          <li class="py-2">
+            <a href="#articles" class="hover:underline">Articles</a>
+          </li>
+          <li class="py-2">
+            <a href="#footer" class="hover:underline">Contact</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-[#1D82B6] text-white py-16 ">
+      <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-4">
+          Bienvenue dans votre pharmacie en ligne
+        </h1>
+        <p class="text-lg">
+          Scannez, commandez et recevez vos médicaments en toute simplicité.
+        </p>
+      </div>
+    </section>
+<!-- Produits Section -->
+<section id="produits" class="py-16">
+  <div class="container mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-10">
+      Produits Disponibles
+    </h2>
+
+    <!-- Afficher les catégories et leurs produits -->
+    {% for categorie in categories %}
+      <h1 class="text-center  text-xl mt-2 mb-4 font-bold text-[#1D82B6]"> {{ categorie.name }}</h1>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for produit in categorie.produits.all %}
+          <div class="bg-white shadow rounded-lg p-4 text-center hover:shadow-lg">
+            <!-- Vérification de l'image du produit -->
+            {% if produit.url_image %}
+              <img
+                src="{{ produit.url_image.url }}"
+                alt="{{ produit.name }}"
+                class="h-40 mx-auto mb-4"
+              />
+            {% else %}
+              <img
+                src="{% static 'media/logo.png' %}"
+                alt="Image par défaut"
+                class="h-40 mx-auto mb-4"
+              />
+            {% endif %}
+            <h3 class="text-lg font-semibold">{{ produit.name }}</h3>
+            <p class="text-gray-600">{{ produit.description }}</p>
+            <p class="text-lg font-bold text-[#1D82B6]">
+              {{ produit.prix }} FCFA
+            </p>
+            <button class="btn-ajouter-panier bg-blue-500 text-white px-4 py-2 rounded mt-2"
+              data-produit-id="{{ produit.id }}"
+              data-quantite="1">
+              Ajouter au panier
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Articles Section -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-10">
+      Nos Dernières Nouvelles & Articles
+    </h2>
+    {% if articles %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {% for article in articles %}
+          <!-- Article Card -->
+          <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition">
+            <div class="bg-gray-50 h-40 mb-4 rounded-md">
+              <img class="w-full h-full mb-1 rounded-md" src="{{ article.image.url }}" alt="{{ article.titre }}" />
+            </div>
+            <h3 class="font-bold text-lg text-[#1D82B6]">
+              {{ article.titre }}
+            </h3>
+            <p class="text-gray-600 text-sm mb-4">
+              {{ article.date_publication|date:"d M Y" }}
+            </p>
+            <a href="{% url 'pharma:article_detail' pk=article.pk %}" class="text-blue-500 hover:text-blue-700">Voir l'article</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-gray-600">Aucun article disponible pour le moment.</p>
+    {% endif %}
+  </div>
+</section>
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-[#1D82B6] text-white text-center py-8">
+      <p>© 2025 Oranga Santé - Tous droits réservés.</p>
+    </footer>
+
+    <!-- Modal pour ajouter au panier -->
+    <div id="cartModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+        <h3 class="text-lg font-semibold">Produit ajouté au panier</h3>
+        <p id="cartMessage" class="mt-2 text-gray-600"></p>
+        <button id="closeModal" class="mt-4 px-6 py-2 bg-[#1D82B6] text-white rounded-lg">
+          Fermer
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour afficher le modal
+        function showModal(message) {
+          const modal = document.getElementById('cartModal');
+          const cartMessage = document.getElementById('cartMessage');
+          cartMessage.textContent = message;
+          modal.classList.remove('hidden');  // Affiche le modal
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+          const modal = document.getElementById('cartModal');
+          modal.classList.add('hidden');  // Cache le modal
+        }
+
+        // Ajouter un gestionnaire d'événements pour fermer le modal
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        // Fonction pour envoyer une requête AJAX pour ajouter au panier
+        async function addToCart(url, produitId, quantite = 1) {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ produit_id: produitId, quantite: quantite })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            showModal(data.message);  // Affiche le message de succès dans le modal
+
+            // Mettre à jour l'affichage du panier si nécessaire
+            const totalElement = document.querySelector('#total-price');
+            if (totalElement) {
+              totalElement.innerText = `${data.total.toFixed(2)} FCFA`;
+            }
+
+            // Afficher la quantité mise à jour (si nécessaire)
+            const quantiteElement = document.querySelector(`#quantite-${produitId}`);
+            if (quantiteElement) {
+              quantiteElement.innerText = data.produit.quantite;
+            }
+          } else {
+            showModal(data.message);  // Affiche le message d'erreur dans le modal
+          }
+        }
+
+        // Ajouter un gestionnaire d'événements pour les boutons "Ajouter au panier"
+        document.querySelectorAll('.btn-ajouter-panier').forEach(button => {
+          button.addEventListener('click', function () {
+            const produitId = this.dataset.produitId;
+            const url = `/f/ajouter-au-panier/${produitId}/`;  // Correction de l'URL
+            const quantite = this.dataset.quantite || 1;  // Quantité par défaut : 1
+            addToCart(url, produitId, quantite);
+          });
+        });
+      });
+
+
+      // Fonction pour scanner l'ordonnance
+    function openCamera() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            const videoElement = document.createElement("video");
+            videoElement.srcObject = stream;
+            videoElement.autoplay = true;
+            videoElement.style = "width: 100%; max-height: 300px; margin-top: 10px;";
+            document.getElementById("camera-container").appendChild(videoElement);
+          })
+          .catch((error) => {
+            console.error("Erreur d'accès à la caméra :", error);
+            alert("Impossible d'ouvrir la caméra.");
+          });
+      } else {
+        alert("Votre appareil ne supporte pas l'accès à la caméra.");
+      }
+    };
+
+    function captureImage() {
+      const video = document.querySelector("video");
+      if (!video) return alert("Veuillez d'abord ouvrir la caméra.");
+    
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+      const imageData = canvas.toDataURL("image/png");
+      fetch("/upload-image/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ image: imageData }),
+      })
+        .then((response) => response.json())
+        .then((data) => alert("Image envoyée avec succès !"))
+        .catch((error) => console.error("Erreur :", error));
+    }
+    
+    </script>
+  </body>
+</html>

@@ -1,0 +1,155 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-blue-600 text-center">Panier</h1>
+        </header>
+        <a href="{% url 'pharma:produit_list' %}" 
+        class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+          Retour
+        </a>
+
+        
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Produits dans le panier -->
+            <section class="lg:col-span-2 space-y-6">
+                {% for item in panier %}
+                    <div class="flex justify-between items-center border border-green-400 rounded-lg p-4" id="product-{{ item.produit.id }}">
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ item.produit.url_image }}" alt="{{ item.produit.nom }}" class="w-16 h-16">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-800">{{ item.produit.nom }}</p>
+                                <p class="text-sm text-gray-600">Prix: {{ item.produit.prix }} FCFA</p>
+                                <p class="text-sm text-gray-600">
+                                    Quantité: <span id="quantite-{{ item.produit.id }}">{{ item.quantite }}</span>
+                                </p>
+                                <div class="mt-2 space-x-2">
+                                    <button class="btn-augmenter bg-blue-500 text-white px-2 py-1 rounded"
+                                            data-produit-id="{{ item.produit.id }}">+</button>
+                                    <button class="btn-reduire bg-red-500 text-white px-2 py-1 rounded"
+                                            data-produit-id="{{ item.produit.id }}">-</button>
+                                    <button class="btn-supprimer bg-gray-500 text-white px-2 py-1 rounded"
+                                            data-produit-id="{{ item.produit.id }}">Supprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-gray-600">Aucun produit dans le panier.</p>
+                {% endfor %}
+            </section>
+
+            <!-- Résumé du panier -->
+            <aside class="space-y-6">
+                <div class="bg-blue-500 text-white p-6 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-4">Résumé du Panier</h2>
+                    <div class="flex justify-between mb-2">
+                        <span>Sous-total:</span>
+                        <span id="total-price">{{ total }} FCFA</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Frais de Livraison:</span>
+                        <span id="shipping-price">Gratuit</span>
+                    </div>
+                    <div class="mt-4">
+                        <button class="btn-vider bg-red-600 text-white w-full py-2 rounded">Vider le panier</button>
+                    </div>
+
+                   
+                    <form action="{% url 'pharma:paiement' %}" method="post" class="mt-5 bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">Passer au paiement</button>
+                    </form>
+                    
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfToken = '{{ csrf_token }}';
+
+        // Fonction pour envoyer une requête AJAX
+        async function sendRequest(url, produitId = null, action = null) {
+            const payload = produitId ? { produit_id: produitId, action: action } : {};
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    if (produitId) {
+                        // Mettre à jour la quantité
+                        if (data.quantite !== undefined) {
+                            document.querySelector(`#quantite-${produitId}`).innerText = data.quantite;
+                        }
+                        // Supprimer un produit si sa quantité est 0
+                        if (data.quantite === 0) {
+                            document.querySelector(`#product-${produitId}`).remove();
+                        }
+                    }
+                    // Mettre à jour le total
+                    document.querySelector('#total-price').innerText = `${data.total.toFixed(2)} FCFA`;
+
+                    // Recharger la page si le panier est vide
+                    if (data.total === 0) {
+                        location.reload();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            } else {
+                alert('Une erreur est survenue.');
+            }
+        }
+
+        // Ajouter un produit
+        document.querySelectorAll('.btn-augmenter').forEach(button => {
+            button.addEventListener('click', function () {
+                const produitId = this.dataset.produitId;
+                sendRequest(`/f/augmenter-quantite/${produitId}/`, produitId, 'augmenter');
+            });
+        });
+
+        // Réduire la quantité d'un produit
+        document.querySelectorAll('.btn-reduire').forEach(button => {
+            button.addEventListener('click', function () {
+                const produitId = this.dataset.produitId;
+                sendRequest(`/f/reduire-quantite/${produitId}/`, produitId, 'reduire');
+            });
+        });
+
+        // Supprimer un produit
+        document.querySelectorAll('.btn-supprimer').forEach(button => {
+            button.addEventListener('click', function () {
+                const produitId = this.dataset.produitId;
+                sendRequest(`/f/supprimer-produit/${produitId}/`, produitId);
+            });
+        });
+
+        // Vider le panier
+        document.querySelector('.btn-vider').addEventListener('click', function () {
+            sendRequest('/f/vider-panier/');
+        });
+    });
+</script>
+</html>

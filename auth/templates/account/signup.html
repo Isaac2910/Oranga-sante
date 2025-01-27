@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes modal-fade-in {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes modal-fade-out {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+    }
+
+    .modal-open {
+      animation: modal-fade-in 0.3s ease-out forwards;
+    }
+
+    .modal-close {
+      animation: modal-fade-out 0.3s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center min-h-screen">
+
+  <!-- Conteneur principal -->
+  <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-4xl">
+    <!-- Titre -->
+    <h2 class="text-4xl font-extrabold text-[#1D82B6] text-center mb-8">Inscription</h2>
+
+    <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-6">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-[#1D82B6] font-semibold mb-2">
+            {{ field.label }}
+          </label>
+          {% load widget_tweaks %}
+          {{ field|add_class:"w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]" }}
+          
+          {% if field.help_text %}
+            <small class="text-gray-500">{{ field.help_text }}</small>
+          {% endif %}
+          
+          {% for error in field.errors %}
+            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      
+      <!-- Bouton -->
+      <div class="text-center">
+        <button
+          type="submit"
+          class="bg-[#1D82B6] text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-[#21688b] transition-all duration-300">
+          S'inscrire
+        </button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
