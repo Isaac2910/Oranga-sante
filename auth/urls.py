@@ -1,9 +1,13 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
-    #path('update/', views.update_profile, name='update_profile'),
+    path('profil/', views.profil, name='profil'),
+    path('profil/modifier/', views.modifier_profil, name='modifier_profil'),
 ]
+
 
 from django.conf import settings
 from django.conf.urls.static import static

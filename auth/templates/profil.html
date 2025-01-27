@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon profil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-2xl font-semibold text-center mb-6">Profil de {{ user.username }}</h2>
+            <div class="space-y-4">
+                <p><strong>Nom :</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><strong>Email :</strong> {{ user.email }}</p>
+                <p><strong>Téléphone :</strong> {{ user.tel }}</p>
+                <p><strong>Date de naissance :</strong> {{ user.date_de_naissance }}</p>
+                <p><strong>Adresse :</strong> {{ user.adresse }}</p>
+                <p><strong>Numéro d'assurance :</strong> {{ user.num_assurance }}</p>
+                {% if user.photo_de_profil %}
+                    <p><strong>Photo de profil :</strong></p>
+                    <img src="{{ user.photo_de_profil.url }}" alt="Photo de profil" class="w-32 h-32 rounded-full mx-auto">
+                {% endif %}
+            </div>
+            <div class="text-center mt-6">
+                <a href="{% url 'modifier_profil' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Modifier mon profil</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

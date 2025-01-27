@@ -16,6 +16,9 @@ from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
+from django.shortcuts import render, get_object_or_404
+from .models import Categorie, Produit
+
 
 def page(request):
     return render(request, 'lading/base.html')
@@ -23,12 +26,19 @@ def page(request):
 
 
 # Afficher tous les produits
-@login_required
-def produit_list(request):
-    produits = Produit.objects.all()
-    articles = Article.objects.all() 
-    return render(request, 'pharma/accueil.html', {'produits': produits, 'articles': articles})
 
+
+@login_required
+# views.py
+
+def produit_list(request):
+    # Récupérer toutes les catégories
+    categories = Categorie.objects.all()
+    # Récupérer tous les articles
+    articles = Article.objects.all()
+
+    # Passer les catégories et les articles au template
+    return render(request, 'pharma/accueil.html', {'categories': categories, 'articles': articles})
 
 #Ajouter au panier
 @login_required
@@ -223,7 +233,7 @@ def paiement(request):
     panier = request.session.get('panier', {})
     if not panier:
         messages.error(request, "Votre panier est vide.")
-        return redirect('pharma:accueil')  # Remplacez par le nom correct de l'URL
+        return redirect('pharma:produit_list')  
 
     try:
         # Calculer le total en vérifiant les clés

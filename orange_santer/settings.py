@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-re3s@h**5qll!b%7^q%zm#@@%4)c13!k7v!_%*21-i+tuzus3d'  # SECURITY WARNING: keep the secret key used in production secret!
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -159,11 +159,19 @@ ACCOUNT_FORMS = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # SMTP settings for development (for production, adjust accordingly)
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
-EMAIL_USE_TLS = False
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+import environ
+import os
+
+# Initialiser l'environnement
+env = environ.Env()
+
+# Charger le fichier .env
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# Variables d'environnement
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
 
 # Configuration d'Authall
 AUTHALL_EMAIL_VERIFICATION = True  # Active la vérification par email
@@ -178,6 +186,9 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3  # Exemple de délai de validité du 
 ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 JAZZMIN_SETTINGS = {

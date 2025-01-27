@@ -20,7 +20,7 @@ class Produit(models.Model):
     description = models.TextField()
     stock = models.PositiveIntegerField()  # Stock ne peut pas être négatif
     requiert_ordonnance = models.BooleanField(default=False)
-    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='produits')
 
     class Meta:
         constraints = [

@@ -13,14 +13,12 @@
         <header class="mb-8">
             <h1 class="text-3xl font-bold text-blue-600 text-center">Panier</h1>
         </header>
+        <a href="{% url 'pharma:produit_list' %}" 
+        class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+          Retour
+        </a>
 
-            {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        
 
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,9 +67,9 @@
                     </div>
 
                    
-                    <form action="{% url 'pharma:paiement' %}" method="post">
+                    <form action="{% url 'pharma:paiement' %}" method="post" class="mt-5 bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
                         {% csrf_token %}
-                        <button type="submit">Passer au paiement</button>
+                        <button type="submit" class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">Passer au paiement</button>
                     </form>
                     
                 </div>

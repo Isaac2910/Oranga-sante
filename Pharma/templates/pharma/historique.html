@@ -8,8 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-blue-300">
-
+    
 <h1 class="text-4xl text-center text-[#1D82B6] font-extrabold mt-10">Historique des Commandes</h1>
+<a href="{% url 'pharma:produit_list' %}" 
+        class="bg-[#1D82B9] ml-9 text-center text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+          Retour
+</a>
+
 <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl mt-10 p-8">
     {% if commandes %}
         {% for commande in commandes %}

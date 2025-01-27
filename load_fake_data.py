@@ -1,19 +1,4 @@
-Catégories de produits : (Médicaments sans ordonnance, produits de bien-être et soins)
-
-
-
-
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-
-
-    import os
+import os
 import django
 from random import randint
 from Pharma.models import Produit, Categorie
