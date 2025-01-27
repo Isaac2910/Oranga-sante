@@ -8,8 +8,7 @@ __pycache__/
 sa/
 node_modules/
 
-# Bases de données SQLite
-db.sqlite3
+
 
 # Médias et fichiers statiques générés
 /media/
