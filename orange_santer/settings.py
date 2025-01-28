@@ -48,7 +48,8 @@ INSTALLED_APPS = [
 
 
 # Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, change to SMTP in production
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+  # For development, change to SMTP in production
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 # Authentication settings
@@ -168,7 +169,10 @@ env = environ.Env()
 # Charger le fichier .env
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# Variables d'environnement
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
