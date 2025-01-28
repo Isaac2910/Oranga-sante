@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
+STATIC_ROOT = BASE_DIR / 'static'
 # Internationalization settings
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'UTC'
