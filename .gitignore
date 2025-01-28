@@ -11,8 +11,7 @@ node_modules/
 
 
 # Médias et fichiers statiques générés
-/media/
-/staticfiles/
+
 
 # Dossiers de virtualenv
 venv/
