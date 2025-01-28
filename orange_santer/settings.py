@@ -85,7 +85,7 @@ MIDDLEWARE = [
 
     'allauth.account.middleware.AccountMiddleware',
     #'allauth.socialaccount.middleware.SocialAccountMiddleware',
-
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
 ]
 
