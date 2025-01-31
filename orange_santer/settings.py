@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     
 ]
 
-
+ACCOUNT_CONFIRM_EMAIL_REDIRECT_URL = "/"
 
 
 
