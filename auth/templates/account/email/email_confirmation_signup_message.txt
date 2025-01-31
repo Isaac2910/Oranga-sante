@@ -1,6 +1,6 @@
 Bonjour {{ user.get_full_name|default:user.username }},
 
-Bienvenue sur {{ Oranga Sante }} ! Nous sommes ravis de vous compter parmi nous.  
+Bienvenue sur  Oranga Sante  ! Nous sommes ravis de vous compter parmi nous.  
 
 Veuillez confirmer votre adresse e-mail pour activer votre compte. Cliquez sur le lien suivant :  
 {{ activate_url }}
