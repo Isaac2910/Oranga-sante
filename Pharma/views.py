@@ -386,7 +386,7 @@ from .models import Article
 
 
 
-
+#Detail article
 
 def article_detail(request, pk):
     article = get_object_or_404(Article, pk=pk)
@@ -395,3 +395,13 @@ def article_detail(request, pk):
         "article": article,
         "related_articles": related_articles,
     })
+
+
+from django.db.models import Sum, F
+
+@property
+def get_cart_total(self):
+    total = self.commande_produits.aggregate(
+        total=Sum(F('produit__prix') * F('quantity'))
+    )['total']
+    return round(total or 0, 2)  # Arrondi et gère les valeurs nulles

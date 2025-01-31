@@ -51,7 +51,8 @@ class Commande(models.Model):
     date_commande = models.DateTimeField(auto_now_add=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
     montant_total = models.PositiveIntegerField(default=0)
-    total = models.DecimalField(max_digits=100, decimal_places=33, default=0)
+    total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
     assurance = models.BooleanField(default=False)
     ordonnance = models.FileField(upload_to='ordonnances/', blank=True, null=True)
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)

@@ -75,8 +75,10 @@
         <div class="facture-details">
             <h2>Détails du client</h2>
             <p><strong>Client :</strong> {{ user.username }}</p>
+            <p><strong>Numéro d'assurance :</strong> {{ num_assurance }}</p>
             <p><strong>Date :</strong> {{ commande.date_commande }}</p>
-            <p><strong>Total :</strong> {{ commande.total }} FCFA</p>
+            <p><strong>Total de la commande :</strong> {{ commande.get_cart_total }}FCFA</p>
+            
         </div>
 
         <!-- Détails des produits -->

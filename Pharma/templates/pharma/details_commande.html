@@ -66,8 +66,9 @@
 
         <div class="commande-details">
             <p><strong>Date :</strong> {{ commande.date_commande|date:"d/m/Y H:i" }}</p>
-            <p><strong>Total :</strong> {{ commande.total }} FCFA</p>
+            
             <p><strong>Statut :</strong> {{ commande.get_statut_display }}</p>
+            <p><strong>Total de la commande :</strong> {{ commande.get_cart_total }}FCFA</p>
         </div>
 
         <div class="produits">

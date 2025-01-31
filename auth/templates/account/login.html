@@ -11,13 +11,10 @@
 
   <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
     <h2 class="text-4xl font-extrabold text-[#1D82B6] text-center mb-8">Connexion</h2>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
+    {% if "error" in message.tags and "connexion" in message %}
+    <li class="{{ message.tags }}">{{ message }}</li>
     {% endif %}
+
     <form method="post" class="grid grid-cols-1 gap-6">
       {% csrf_token %}
       
@@ -54,12 +51,21 @@
       <!-- Champ Mot de passe -->
       <div>
         <label for="password" class="block text-[#1D82B6] font-semibold mb-2">Mot de passe</label>
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Votre mot de passe" 
-          class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]"
-          required>
+        <div class="relative">
+          <input 
+            id="password" 
+            type="password" 
+            name="password" 
+            placeholder="Votre mot de passe" 
+            class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D82B6]"
+            required>
+          <!-- Bouton pour afficher/masquer le mot de passe -->
+          <button type="button" 
+                  id="togglePassword" 
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#1D82B6] focus:outline-none">
+            Voir
+          </button>
+        </div>
         {% for error in form.password.errors %}
           <p class="text-red-500 text-sm mt-1">{{ error }}</p>
         {% endfor %}
@@ -87,6 +93,25 @@
       Pas encore inscrit ? <a href="{% url 'account_signup' %}" class="text-[#1D82B6] font-semibold">Créer un compte</a>
     </p>
   </div>
+
+  <!-- Script JavaScript, déplacé à la fin du body -->
+  <script>
+    // Fonction pour basculer entre afficher et masquer le mot de passe
+    function togglePassword() {
+      var passwordField = document.getElementById('password');
+      var passwordToggle = document.getElementById('togglePassword');
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';  // Change le type du champ en texte
+        passwordToggle.textContent = 'Masquer';  // Change le texte du bouton
+      } else {
+        passwordField.type = 'password';  // Change le type du champ en mot de passe
+        passwordToggle.textContent = 'Voir';  // Change le texte du bouton
+      }
+    }
+
+    // Associe l'événement au bouton de manière explicite
+    document.getElementById('togglePassword').addEventListener('click', togglePassword);
+  </script>
 
 </body>
 </html>

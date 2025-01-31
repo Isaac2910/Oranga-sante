@@ -1,0 +1,11 @@
+Bonjour {{ user.get_full_name|default:user.username }},
+
+Bienvenue sur {{ site_name }} ! Nous sommes ravis de vous compter parmi nous.  
+
+Veuillez confirmer votre adresse e-mail pour activer votre compte. Cliquez sur le lien suivant :  
+{{ activate_url }}
+
+Ce lien est valable pendant 24 heures. Si vous rencontrez des problèmes, contactez-nous à support@votre-site.com.
+
+Merci de votre confiance,  
+L'équipe {{ site_name }}
