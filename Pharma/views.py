@@ -212,7 +212,28 @@ def vider_panier(request):
 
 
 
-################
+#####livreson
+
+from django.http import JsonResponse
+
+@login_required
+def choix_livraison(request):
+    if request.method == "POST":
+        mode_livraison = request.POST.get("mode_livraison")
+        if mode_livraison not in ['standard', 'express', 'retrait']:
+            return JsonResponse({"success": False, "message": "Mode de livraison invalide."})
+
+        # Sauvegarde dans la session
+        request.session['mode_livraison'] = mode_livraison
+
+        # Retour avec un succès
+        return JsonResponse({"success": True, "mode_livraison": mode_livraison})
+    
+    return JsonResponse({"success": False, "message": "Méthode invalide."})
+
+
+
+#########
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -257,10 +278,6 @@ def paiement(request):
         messages.error(request, f"Erreur lors du paiement : {str(e)}")
         return redirect('pharma:accueil')  # Remplacez par le nom correct de l'URL
 
-
-##########facture
-import base64
-
 @login_required
 def generer_facture(request):
     paiement_data = request.session.get('paiement_valide', None)
@@ -277,7 +294,7 @@ def generer_facture(request):
         commande = Commande.objects.filter(client=request.user, statut='en_attente').first()
 
         if not commande:
-            # Création de la commande
+            # Création de la commande si elle n'existe pas
             commande = Commande.objects.create(client=request.user, total=total)
 
         produits = []
@@ -285,26 +302,33 @@ def generer_facture(request):
             produit = get_object_or_404(Produit, id=produit_id)
 
             # Vérification de la quantité de stock avant mise à jour
-            if produit.stock >= details['quantite']:  # Utilisation de 'quantite' ici
-                # Ajouter le produit à la commande
-                CommandeProduit.objects.create(
-                    commande=commande,
-                    produit=produit,
-                    quantity=details['quantite'],  # Utilisation de 'quantite' ici aussi
-                )
+            if produit.stock >= details['quantite']:
+                # Vérifier si le produit est déjà dans la commande
+                commande_produit = CommandeProduit.objects.filter(commande=commande, produit=produit).first()
+                
+                if commande_produit:
+                    # Si le produit existe déjà dans la commande, on met à jour sa quantité
+                    commande_produit.quantity += details['quantite']
+                    commande_produit.save()
+                else:
+                    # Sinon, on ajoute le produit à la commande
+                    CommandeProduit.objects.create(
+                        commande=commande,
+                        produit=produit,
+                        quantity=details['quantite'],
+                    )
 
                 produits.append({
                     'name': produit.name,
                     'prix': produit.prix,
-                    'quantite': details['quantite'],  # 
+                    'quantite': details['quantite'],
                     'total': produit.prix * details['quantite'],
                 })
 
                 # Mise à jour du stock
-                produit.stock -= details['quantite']  # Utilisation de 'quantite' ici aussi
+                produit.stock -= details['quantite']
                 produit.save()
             else:
-                # Stock insuffisant pour effectuer la commande
                 messages.error(request, f"Le produit {produit.name} n'a pas suffisamment de stock.")
                 return redirect('pharma:panier')
 
@@ -320,7 +344,7 @@ def generer_facture(request):
         qr_buffer.seek(0)
         qr_code_url = f"data:image/png;base64,{base64.b64encode(qr_buffer.getvalue()).decode('utf-8')}"
 
-        # Supprimer le panier de la session
+        # Supprimer le panier de la session après la commande
         request.session['panier'] = {}
 
         # Rendu de la page facture
@@ -334,7 +358,9 @@ def generer_facture(request):
     except Exception as e:
         messages.error(request, f"Erreur lors de la génération de la facture : {e}")
         return redirect('pharma:panier')
-
+    finally:
+        # Assurez-vous de vider le panier dans la session même en cas d'erreur
+        request.session['panier'] = {}
 
 
 @login_required

@@ -31,7 +31,7 @@ from .models import Categorie, Produit, Commande, CommandeProduit
 
 
 class CommandeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'statut')
+    list_display = ('id', 'client', 'statut','produits_commandes','prix_total')
     actions = ['scan_qr_code']
 
     def scan_qr_code(self, request, queryset):

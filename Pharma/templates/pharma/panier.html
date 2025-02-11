@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,21 +13,23 @@
         <header class="mb-8">
             <h1 class="text-3xl font-bold text-blue-600 text-center">Panier</h1>
         </header>
-        <a href="{% url 'pharma:produit_list' %}" 
-        class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
-          Retour
+        
+        <a href="{% url 'pharma:produit_list' %}" class="bg-[#1D82B9] mb-5 text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+            Retour
         </a>
 
-        
-
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
             <!-- Produits dans le panier -->
             <section class="lg:col-span-2 space-y-6">
                 {% for item in panier %}
                     <div class="flex justify-between items-center border border-green-400 rounded-lg p-4" id="product-{{ item.produit.id }}">
                         <div class="flex items-center space-x-4">
+                            {% if item.produit.url_image %}
                             <img src="{{ item.produit.url_image }}" alt="{{ item.produit.nom }}" class="w-16 h-16">
+                        {% else %}
+                            <img src="{% static 'images/default.png' %}" alt="Image par défaut" class="w-16 h-16">
+                        {% endif %}
+
                             <div>
                                 <p class="text-lg font-semibold text-gray-800">{{ item.produit.nom }}</p>
                                 <p class="text-sm text-gray-600">Prix: {{ item.produit.prix }} FCFA</p>
@@ -58,98 +60,133 @@
                         <span>Sous-total:</span>
                         <span id="total-price">{{ total }} FCFA</span>
                     </div>
-                    <div class="flex justify-between mb-2">
-                        <span>Frais de Livraison:</span>
-                        <span id="shipping-price">Gratuit</span>
-                    </div>
+                     <!-- Formulaire de choix de livraison -->
+                     <form id="livraison-form" action="{% url 'pharma:choix_livraison' %}" method="post">
+                        {% csrf_token %}
+                        <label for="livraison" class="block text-white font-bold">Mode de livraison :</label>
+                        <select id="livraison" name="mode_livraison" class="w-full text-black p-2 rounded">
+                            <option value="standard" {% if request.session.mode_livraison == 'standard' %}selected{% endif %}>
+                                Livraison standard (2h à 4h) : 3000 FCFA
+                            </option>
+                            <option value="express" {% if request.session.mode_livraison == 'express' %}selected{% endif %}>
+                                Livraison express (≤1h) : 5000 FCFA
+                            </option>
+                            <option value="retrait" {% if request.session.mode_livraison == 'retrait' %}selected{% endif %}>
+                                Retrait en magasin
+                            </option>
+                        </select>
+                        <button type="submit" class="bg-green-600 text-white px-2 py-2 rounded-lg shadow-md hover:bg-green-700 w-full mt-4">
+                            Appliquer
+                        </button>
+                    </form>
+
+                    <!-- Frais de livraison -->
                     <div class="mt-4">
                         <button class="btn-vider bg-red-600 text-white w-full py-2 rounded">Vider le panier</button>
                     </div>
 
-                   
-                    <form action="{% url 'pharma:paiement' %}" method="post" class="mt-5 bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+                    <form action="{% url 'pharma:paiement' %}" method="post" class="mt-5">
                         {% csrf_token %}
-                        <button type="submit" class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">Passer au paiement</button>
+                        <input type="hidden" name="livraison" id="livraison_input">
+                        <button type="submit" class="bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94] w-full">
+                            Passer au paiement
+                        </button>
                     </form>
-                    
                 </div>
             </aside>
         </div>
     </div>
-</body>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const csrfToken = '{{ csrf_token }}';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const livraisonForm = document.getElementById('livraison-form');
+            const livraisonSelect = document.getElementById('livraison');
+            const totalPrice = document.getElementById('total-price');
+            const sousTotal = parseFloat("{{ total }}");
 
-        // Fonction pour envoyer une requête AJAX
-        async function sendRequest(url, produitId = null, action = null) {
-            const payload = produitId ? { produit_id: produitId, action: action } : {};
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
+            // Gestion de la soumission du formulaire via AJAX
+            livraisonForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Empêcher la soumission classique
+
+                const formData = new FormData(livraisonForm);
+                const csrfToken = '{{ csrf_token }}';
+
+                fetch(livraisonForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mise à jour de l'interface avec le mode de livraison choisi
+                        alert("Mode de livraison mis à jour avec succès!");
+                        // Mettre à jour le prix total
+                        let fraisLivraison = 0;
+                        if (livraisonSelect.value === "standard") fraisLivraison = 3000;
+                        if (livraisonSelect.value === "express") fraisLivraison = 5000;
+                        totalPrice.innerText = (sousTotal + fraisLivraison).toFixed(2) + " FCFA";
+                    } else {
+                        alert("Erreur lors de la mise à jour du mode de livraison.");
+                    }
+                })
+                .catch(error => {
+                    alert('Erreur de communication avec le serveur.');
+                });
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    if (produitId) {
-                        // Mettre à jour la quantité
-                        if (data.quantite !== undefined) {
-                            document.querySelector(`#quantite-${produitId}`).innerText = data.quantite;
-                        }
-                        // Supprimer un produit si sa quantité est 0
-                        if (data.quantite === 0) {
-                            document.querySelector(`#product-${produitId}`).remove();
-                        }
-                    }
-                    // Mettre à jour le total
-                    document.querySelector('#total-price').innerText = `${data.total.toFixed(2)} FCFA`;
+            // Ajouter un produit
+            document.querySelectorAll('.btn-augmenter').forEach(button => {
+                button.addEventListener('click', () => {
+                    sendRequest(`/pharma/augmenter-quantite/${button.dataset.produitId}/`, button.dataset.produitId, 'augmenter');
+                });
+            });
 
-                    // Recharger la page si le panier est vide
-                    if (data.total === 0) {
+            // Réduire un produit
+            document.querySelectorAll('.btn-reduire').forEach(button => {
+                button.addEventListener('click', () => {
+                    sendRequest(`/pharma/reduire-quantite/${button.dataset.produitId}/`, button.dataset.produitId, 'reduire');
+                });
+            });
+
+            // Supprimer un produit
+            document.querySelectorAll('.btn-supprimer').forEach(button => {
+                button.addEventListener('click', () => {
+                    sendRequest(`/pharma/supprimer-produit/${button.dataset.produitId}/`, button.dataset.produitId);
+                });
+            });
+
+            // Vider le panier
+            document.querySelector('.btn-vider').addEventListener('click', () => {
+                sendRequest('/pharma/vider-panier/');
+            });
+
+            // Fonction d'envoi des requêtes
+            async function sendRequest(url, produitId = null, action = null) {
+                const payload = produitId ? { produit_id: produitId, action: action } : {};
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
                         location.reload();
+                    } else {
+                        alert(data.message);
                     }
                 } else {
-                    alert(data.message);
+                    alert('Erreur lors de la requête.');
                 }
-            } else {
-                alert('Une erreur est survenue.');
             }
-        }
-
-        // Ajouter un produit
-        document.querySelectorAll('.btn-augmenter').forEach(button => {
-            button.addEventListener('click', function () {
-                const produitId = this.dataset.produitId;
-                sendRequest(`/f/augmenter-quantite/${produitId}/`, produitId, 'augmenter');
-            });
         });
-
-        // Réduire la quantité d'un produit
-        document.querySelectorAll('.btn-reduire').forEach(button => {
-            button.addEventListener('click', function () {
-                const produitId = this.dataset.produitId;
-                sendRequest(`/f/reduire-quantite/${produitId}/`, produitId, 'reduire');
-            });
-        });
-
-        // Supprimer un produit
-        document.querySelectorAll('.btn-supprimer').forEach(button => {
-            button.addEventListener('click', function () {
-                const produitId = this.dataset.produitId;
-                sendRequest(`/f/supprimer-produit/${produitId}/`, produitId);
-            });
-        });
-
-        // Vider le panier
-        document.querySelector('.btn-vider').addEventListener('click', function () {
-            sendRequest('/f/vider-panier/');
-        });
-    });
-</script>
+    </script>
+</body>
 </html>

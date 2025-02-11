@@ -46,16 +46,34 @@ class Commande(models.Model):
         ('terminee', 'Terminée'),
         ('annulee', 'Annulée'),
     ]
+    
+    MODES_LIVRAISON = [
+        ('standard', 'Livraison standard (2h à 4h) : 3000f'),
+        ('express', 'Livraison express (≤1h) : 5000f'),
+        ('retrait', 'Retrait en magasin'),     
+
+    ]
 
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_commande = models.DateTimeField(auto_now_add=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
     montant_total = models.PositiveIntegerField(default=0)
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    
+    mode_livraison = models.CharField(max_length=20, choices=MODES_LIVRAISON, default='standard')
 
     assurance = models.BooleanField(default=False)
     ordonnance = models.FileField(upload_to='ordonnances/', blank=True, null=True)
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
+    
+    @property
+    def prix_total(self):
+        total = sum(
+            item.produit.prix * item.quantity
+            for item in self.commande_produits.all()
+        )
+        return total
+    
 
     def save(self, *args, **kwargs):
         # Sauvegarde initiale pour obtenir l'ID avant de générer le QR Code
@@ -89,20 +107,27 @@ class Commande(models.Model):
             if not item.produit.requiert_ordonnance:
                 return True
         return False
-
-
-
+    
     @property
-    def get_cart_total(self):
-        orderitems = self.commande_produits.all()
-        total = 0
-        for item in orderitems:
-            # Vérification que le prix et la quantité sont des valeurs valides
-            if isinstance(item.produit.prix, (int, float)) and isinstance(item.quantity, int):
-                total += item.produit.prix * item.quantity
-            else:
-                raise ValueError(f"Erreur avec les valeurs du produit {item.produit.name}: prix ou quantité invalide.")
-        return total
+    def produits_commandes(self):
+        return ", ".join(
+            f"{item.produit.name} (x{item.quantity})"
+            for item in self.commande_produits.all()
+        )
+    
+    @property
+    def prix_livraison(self):
+        if self.mode_livraison == 'standard':
+            return 3000
+        elif self.mode_livraison == 'express':
+            return 5000
+        elif self.mode_livraison == 'retrait':
+            return 0
+        return 0  # 
+
+
+
+
 
 
     def __str__(self):

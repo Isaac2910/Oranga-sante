@@ -51,11 +51,14 @@
     </style>
 </head>
 <body>
-    <a href="{% url 'pharma:produit_list' %}" 
-        class="ml-9 mt-auto bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
+    
+    <div class="ml-9 mt-9 ">
+        <a href="{% url 'pharma:produit_list' %}" 
+        class="ml-9 mt-9 bg-[#1D82B9] text-white px-2 py-2 rounded-lg shadow-md hover:bg-[#166a94]">
           Retour a la page d'accueil
-    </a>
-    <div class="container">
+        </a>
+    </div>
+    <div class="container mt-5">
         <h1>Détails de la Commande n° {{ commande.id }}</h1>
         <div>
             <h3>QR Code de la Commande</h3>
@@ -68,7 +71,7 @@
             <p><strong>Date :</strong> {{ commande.date_commande|date:"d/m/Y H:i" }}</p>
             
             <p><strong>Statut :</strong> {{ commande.get_statut_display }}</p>
-            <p><strong>Total de la commande :</strong> {{ commande.get_cart_total }}FCFA</p>
+            <p><strong>Total de la commande :</strong> {{ commande.total }}FCFA</p>
         </div>
 
         <div class="produits">

@@ -24,7 +24,7 @@
                     <span class="font-bold text-[#1D82B6]">{{ commande.id }}</span>
                 </p>
                 <p><strong>Date :</strong> {{ commande.date_commande }}</p>
-                <p><strong>Total de la commande :</strong> {{ commande.get_cart_total }}FCFA</p>
+                <p><strong>Total de la commande :</strong> {{ commande.prix_total }}FCFA</p>
                 </p>
                 <p class="text-gray-600 font-bold ">Statut : 
                     <span class="font-medium {% if commande.statut == 'livrée' %}text-[#43BC84]{% else %}text-[#FF5733]{% endif %}">

@@ -27,6 +27,8 @@ urlpatterns = [
     
     
     path('articles/<int:pk>/', views.article_detail, name='article_detail'),  # URL pour le détail
+    
+    path('choix-livraison/', views.choix_livraison, name='choix_livraison'),
   
 
 

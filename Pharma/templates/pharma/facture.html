@@ -74,10 +74,12 @@
         <!-- Détails de la facture -->
         <div class="facture-details">
             <h2>Détails du client</h2>
+            <p><strong>Mode de livraison :</strong> {{ commande.mode_livraison  }}</p>
             <p><strong>Client :</strong> {{ user.username }}</p>
-            <p><strong>Numéro d'assurance :</strong> {{ num_assurance }}</p>
+            <p><strong>Numéro d'assurance :</strong> 944 157 8</p>
             <p><strong>Date :</strong> {{ commande.date_commande }}</p>
-            <p><strong>Total de la commande :</strong> {{ commande.get_cart_total }}FCFA</p>
+            <p><strong>Total de la commande :</strong> {{ commande.prix_total}}FCFA</p>
+            <p><strong>Prix de Livraison :</strong> {{ commande.prix_livraison }}FCFA</p>
             
         </div>
 
